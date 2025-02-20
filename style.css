@@ -1,0 +1,23 @@
+@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+
+
+.UserInfo .UserDetails .UserText{
+    font-size: 12px;
+}
+
+
+@keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+.animate-ticker {
+    display: inline-block;
+    white-space: nowrap;
+    animation: ticker 15s linear infinite;
+}
+
+
