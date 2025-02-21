@@ -1,5 +1,22 @@
+<?php
+// معالجة البيانات عند إرسال النموذج
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // استلام البيانات من النموذج
+    $equipment_name = $_POST['equipment_name'];
+    $maintenance_date = $_POST['maintenance_date'];
+    $status = $_POST['status'];
 
+    // هنا يمكنك إضافة كود لحفظ البيانات في قاعدة البيانات (إذا كنت تستخدم قاعدة بيانات)
+    echo "تم تسجيل المعدات للصيانة بنجاح!";
+}
 
+// هذا مجرد مثال لبيانات المعدات في حالة لم تستخدم قاعدة بيانات
+$equipment = [
+    ['name' => 'Laptop', 'status' => 'Needs Repair'],
+    ['name' => 'Printer', 'status' => 'In Good Condition'],
+    ['name' => 'Router', 'status' => 'Needs Repair'],
+];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,20 +28,16 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 text-gray-800">
-<div class="md:flex hidden w-64 bg-blue-900 rounded-r-lg text-white p-6 fixed top-0 left-0 h-full shadow-lg">
-        <div class="space-y-6 w-full">
-        <div class="logo w-full pb-6 border-b-2 mx-auto">
-            <h2 class="text-2xl font-extrabold">💻 ParcInfo</h2>
-        </div>
-            <div class="flex justify-between items-center">
-                <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
-                <button class="relative text-xl" aria-label="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">3</span>
-                </button>
-            </div>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex justify-center items-center">
 
+
+    <!-- Sidebar -->
+    <div class="md:flex hidden w-64 bg-blue-900 rounded-r-lg text-white p-6 fixed top-0 left-0 h-full shadow-lg">
+        <div class="space-y-6 w-full">
+            <div class="logo w-full pb-6 border-b-2 mx-auto">
+                <h2 class="text-2xl font-extrabold">💻 ParcInfo</h2>
+            </div>
+            <!-- User Info -->
             <div class="UserInfo flex items-center w-full space-x-3 mt-4 border-2 border-white p-4 rounded-2xl relative">
                 <span class="cursor-pointer" id="userDropdownButton"><i class="fa-solid fa-caret-down"></i></span>
                 <img src="assets/profile.jpg" alt="User Avatar" class="w-12 h-12 rounded-full cursor-pointer" id="userDropdownButton">
@@ -38,8 +51,7 @@
                 </div>
             </div>
 
-
-
+            <!-- Sidebar Menu -->
             <div class="space-y-4 mt-6">
                 <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-home"></i>
@@ -72,79 +84,80 @@
         </div>
     </div>
 
-    <!-- Dark Mode -->
+    <!-- Dark Mode Button -->
     <div class="p-6 fixed top-4 mt-6 right-4 z-50">
         <button id="darkModeToggle" class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-600 transition-colors duration-300">
             <i id="darkModeIcon" class="fas fa-moon"></i>
         </button>
     </div>
 
-
-
-
-
     <!-- Main Content -->
-    <div class="ml-64 p-6 mb-20 mt-8">
-        <h2 class="text-4xl font-bold text-center mb-16 text-blue-950">Add Equipment</h2>
-        <div class="bg-white p-6 rounded-lg shadow-md shadow-gray-500">
-            <form action="#" method="POST" class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-gray-700 font-semibold">Equipment Name</label>
-                    <input type="text" id="input" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold">Category</label>
-                    <select id="input" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
-                        <option>Computers</option>
-                        <option>Printers</option>
-                        <option value="">Monitors</option>
-                        <option value="">Speakers</option>
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto mt-10">
+        <h2 class="text-2xl font-bold text-center mb-4">Maintenance Management</h2>
 
+        <!-- نموذج إضافة صيانة جديدة -->
+        <form action="maintenance.php" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-gray-700">Equipment Name</label>
+                <input type="text" name="equipment_name" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            
+            <div>
+                <label class="block text-gray-700">Maintenance Date</label>
+                <input type="date" name="maintenance_date" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            </div>
 
+            <div>
+                <label class="block text-gray-700">Status</label>
+                <select name="status" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    <option value="Needs Repair">Needs Repair</option>
+                    <option value="In Good Condition">In Good Condition</option>
+                    <option value="Repaired">Repaired</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">Register Maintenance</button>
+        </form>
 
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold">Serial Number</label>
-                    <input type="text" id="input" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold">Purchase Date</label>
-                    <input type="date" id="input" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-semibold">Status</label>
-                    <select id="input" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
-                        <option>Available</option>
-                        <option>Assigned</option>
-                        <option>Maintenance</option>
-                    </select>
-                </div>
-                <div>
-                        <label class="block font-medium mb-1">Upload Picture</label>
-                        <input type="file" id="input" name="equipment_image" accept="image/*" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-600">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-gray-700 font-semibold">Description</label>
-                    <textarea id="input" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" rows="3"></textarea>
-                </div>
-                <div class="md:col-span-2 text-center">
-                    <button type="submit" class="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition">Add Equipment</button>
-                </div>
-            </form>
-        </div>
+        <!-- قائمة المعدات للصيانة -->
+        <h3 class="text-xl font-bold mt-8 mb-4">Equipment Needing Maintenance</h3>
+        <table class="w-full border-collapse">
+            <thead>
+                <tr>
+                    <th class="border px-4 py-2">Equipment</th>
+                    <th class="border px-4 py-2">Status</th>
+                    <th class="border px-4 py-2">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($equipment as $item): ?>
+                    <tr>
+                        <td class="border px-4 py-2"><?= htmlspecialchars($item['name']) ?></td>
+                        <td class="border px-4 py-2"><?= htmlspecialchars($item['status']) ?></td>
+                        <td class="border px-4 py-2">
+                            <?php if ($item['status'] == 'Needs Repair'): ?>
+                                <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg">Repair</button>
+                            <?php elseif ($item['status'] == 'In Good Condition'): ?>
+                                <button class="bg-green-500 text-white px-4 py-2 rounded-lg">Good</button>
+                            <?php else: ?>
+                                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Repaired</button>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
+    
 
 
     <script>
-        //toggle menu
+        // toggle menu
         document.getElementById('userDropdownButton').addEventListener('click', function() {
-        document.getElementById('userDropdownMenu').classList.toggle('hidden');
+            document.getElementById('userDropdownMenu').classList.toggle('hidden');
         });
 
-
-
-        // Dark Mode    
+        // Dark Mode Toggle
         let toggledarkmode = document.getElementById('darkModeToggle').addEventListener('click', function() {
             document.body.classList.toggle('bg-gray-800');
             document.body.classList.toggle('text-gray-200');
@@ -171,9 +184,7 @@
             document.querySelectorAll('.text-blue-950').forEach(element => {
                 element.classList.toggle('dark:text-blue-50')
             })
-            // document.querySelectorAll('[id="input"]').forEach(element => {
-            //     element.style.backgroundColor = 'rgb(6, 6, 32)';
-            // });
+
             document.querySelectorAll('.text-gray-700').forEach(element => {
                 element.classList.toggle('dark:text-gray-300');
             });
@@ -186,9 +197,7 @@
                 element.classList.toggle('text-white');
                 element.classList.toggle('border-gray-600');
             });
-
         });
-        console.log(toggledarkmode);
     </script>
 </body>
 </html>

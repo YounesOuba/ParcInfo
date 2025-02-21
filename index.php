@@ -126,7 +126,7 @@
             <i class="fas fa-user-check text-2xl mb-2"></i>
             Assign Equipment
         </a>
-        <a href="maintenance.html" class="bg-green-800 text-white text-center p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex flex-col items-center">
+        <a href="maintenance.php" class="bg-green-800 text-white text-center p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex flex-col items-center">
             <i class="fas fa-wrench text-2xl mb-2"></i>
             Maintenance
         </a>
