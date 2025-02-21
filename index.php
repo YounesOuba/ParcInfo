@@ -14,65 +14,75 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="md:flex hidden w-64 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg">
-        <div class="space-y-6 w-full">
+    <!-- Sidebar Toggle Button (Visible on Mobile) -->
+<button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+    <div class="space-y-6 w-full">
+        <!-- Logo -->
         <div class="logo w-full border-b-2 -mt-6 mx-auto">
             <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
         </div>
-            <div class="flex justify-between items-center">
-                <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
-                <button class="relative text-xl" aria-label="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
-                </button>
+
+        <!-- Search Bar and Notifications -->
+        <div class="flex justify-between items-center">
+            <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
+            <button class="relative text-xl" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
+            </button>
+        </div>
+
+        <!-- User Info -->
+        <div class="UserInfo flex items-center w-full space-x-3 mt-4 border-2 border-white p-4 rounded-2xl relative">
+            <span class="cursor-pointer" id="userDropdownButton"><i class="fa-solid fa-caret-down"></i></span>
+            <img src="assets/profile.jpg" alt="User Avatar" class="w-12 h-12 rounded-full cursor-pointer" id="userDropdownButton">
+            <div class="UserDetails cursor-pointer">
+                <span class="w-full text-sm font-bold">Younes Ouba</span>
+                <p class="UserText">IT Department</p>
             </div>
-
-            <div class="UserInfo flex items-center w-full space-x-3 mt-4 border-2 border-white p-4 rounded-2xl relative">
-                <span class="cursor-pointer" id="userDropdownButton"><i class="fa-solid fa-caret-down"></i></span>
-                <img src="assets/profile.jpg" alt="User Avatar" class="w-12 h-12 rounded-full cursor-pointer" id="userDropdownButton">
-                <div class="UserDetails cursor-pointer">
-                    <span class="w-full text-sm font-bold">Younes Ouba</span>
-                    <p class="UserText">IT Department</p>
-                </div>
-                <div class="absolute top-16 left-0 bg-white text-gray-800 p-4 rounded-lg shadow-lg hidden" id="userDropdownMenu">
-                    <a href="settings.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-cogs"></i> Settings</a>
-                    <a href="logout.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-            </div>
-
-
-
-            <div class="space-y-4 mt-6">
-                <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-cogs"></i>
-                    <span>Equipment</span>
-                </a>
-                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Assign</span>
-                </a>
-                <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-wrench"></i>
-                    <span>Maintenance</span>
-                </a>
-            </div>
-
-            <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-cogs"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="logout.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
+            <div class="absolute top-16 left-0 bg-white text-gray-800 p-4 rounded-lg shadow-lg hidden" id="userDropdownMenu">
+                <a href="settings.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-cogs"></i> Settings</a>
+                <a href="logout.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
+
+        <!-- Navigation Links -->
+        <div class="space-y-4 mt-6">
+            <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-cogs"></i>
+                <span>Equipment</span>
+            </a>
+            <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Assign</span>
+            </a>
+            <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-wrench"></i>
+                <span>Maintenance</span>
+            </a>
+        </div>
+
+        <!-- Settings and Logout -->
+        <div class="mt-8 space-y-4">
+            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-cogs"></i>
+                <span>Settings</span>
+            </a>
+            <a href="logout.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
     </div>
+</div>
 
     <!-- Dark Mode -->
     <div class="p-6 fixed top-4 mt-6 right-4 z-50">
@@ -84,10 +94,11 @@
 
     
 
-<!-- Main Content Area -->
 <div class="md:ml-64 p-6 mt-8">
-    <h2 class="text-4xl to-blue-950 font-extrabold mb-16 text-center ">Parc Informatique Dashboard</h2>
-    
+<div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 pb-10 text-center rounded-lg mb-8">
+    <h2 class="text-4xl font-bold">Parc Informatique Dashboard</h2>
+</div>    
+
     <div class="grid md:grid-cols-3 gap-6 mb-6">
         <div class="bg-blue-600 text-white p-6 rounded-lg shadow-lg flex items-center">
             <i class="fas fa-desktop text-4xl mr-4"></i>
@@ -193,6 +204,7 @@
             <canvas id="barChart"></canvas>
         </div>
     </div>
+    <canvas id="lineChart" class="w-2xl bg-white mt-10 shadow-md shadow-gray-500"></canvas>
 </div>
 </div>
 
@@ -251,6 +263,18 @@
             });
 
 
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                    datasets: [{
+                        label: 'Equipment Usage',
+                        data: [10, 20, 15, 25, 30],
+                        borderColor: '#3b82f6',
+                        fill: false,
+                    }]
+                },
+            });
 
         //dark mode
         document.getElementById('darkModeToggle').addEventListener('click', function() {
@@ -279,6 +303,21 @@
         });
 
 
+
+            // Toggle Sidebar on Mobile
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+
+            // Close Sidebar When Clicking Outside (Optional)
+            document.addEventListener('click', (event) => {
+                if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
 
         
         </script>

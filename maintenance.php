@@ -130,7 +130,24 @@ $equipment = [
             Register Maintenance
         </button>
     </form>
-
+    <!-- Add this inside the maintenance.php file, below the form -->
+<div class="mt-8">
+    <h3 class="text-2xl font-bold text-gray-800 mb-4">Maintenance Progress</h3>
+    <div class="space-y-4">
+        <div>
+            <p class="text-sm mb-2">Laptop Repair: 60%</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 60%;"></div>
+            </div>
+        </div>
+        <div>
+            <p class="text-sm mb-2">Printer Maintenance: 80%</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-green-600 h-2.5 rounded-full" style="width: 80%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Equipment List -->
     <h3 class="text-2xl font-bold text-gray-800 mt-10 mb-4">Equipment Needing Maintenance</h3>
     <div class="overflow-x-auto">
