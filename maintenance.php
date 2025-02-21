@@ -32,12 +32,19 @@ $equipment = [
 
 
     <!-- Sidebar -->
-    <div class="md:flex hidden w-64 bg-blue-900 rounded-r-lg text-white p-6 fixed top-0 left-0 h-full shadow-lg">
+    <div class="md:flex hidden w-64 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg">
         <div class="space-y-6 w-full">
-            <div class="logo w-full pb-6 border-b-2 mx-auto">
-                <h2 class="text-2xl font-extrabold">💻 ParcInfo</h2>
+        <div class="logo w-full border-b-2 -mt-6 mx-auto">
+            <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
+        </div>
+            <div class="flex justify-between items-center">
+                <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
+                <button class="relative text-xl" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
+                </button>
             </div>
-            <!-- User Info -->
+
             <div class="UserInfo flex items-center w-full space-x-3 mt-4 border-2 border-white p-4 rounded-2xl relative">
                 <span class="cursor-pointer" id="userDropdownButton"><i class="fa-solid fa-caret-down"></i></span>
                 <img src="assets/profile.jpg" alt="User Avatar" class="w-12 h-12 rounded-full cursor-pointer" id="userDropdownButton">
@@ -51,17 +58,18 @@ $equipment = [
                 </div>
             </div>
 
-            <!-- Sidebar Menu -->
+
+
             <div class="space-y-4 mt-6">
                 <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                <a href="view_equipment.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Equipment</span>
                 </a>
-                <a href="assign.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Assign</span>
                 </a>
@@ -92,55 +100,60 @@ $equipment = [
     </div>
 
     <!-- Main Content -->
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto mt-10">
-        <h2 class="text-2xl font-bold text-center mb-4">Maintenance Management</h2>
+    <div class="p-8 rounded-lg shadow-md shadow-gray-500 ml-64 mx-auto mt-10 w-full">
+    <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-gray-700">Maintenance Management</h2>
+    </div>
 
-        <!-- نموذج إضافة صيانة جديدة -->
-        <form action="maintenance.php" method="POST" class="space-y-4">
-            <div>
-                <label class="block text-gray-700">Equipment Name</label>
-                <input type="text" name="equipment_name" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-            </div>
-            
-            <div>
-                <label class="block text-gray-700">Maintenance Date</label>
-                <input type="date" name="maintenance_date" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-            </div>
+    <!-- Form: Add New Maintenance -->
+    <form action="maintenance.php" method="POST" class="space-y-5 w-2xl mx-auto">
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Equipment Name</label>
+            <input type="text" name="equipment_name" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+        </div>
 
-            <div>
-                <label class="block text-gray-700">Status</label>
-                <select name="status" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                    <option value="Needs Repair">Needs Repair</option>
-                    <option value="In Good Condition">In Good Condition</option>
-                    <option value="Repaired">Repaired</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">Register Maintenance</button>
-        </form>
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Maintenance Date</label>
+            <input type="date" name="maintenance_date" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+        </div>
 
-        <!-- قائمة المعدات للصيانة -->
-        <h3 class="text-xl font-bold mt-8 mb-4">Equipment Needing Maintenance</h3>
-        <table class="w-full border-collapse">
-            <thead>
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Status</label>
+            <select name="status" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                <option value="Needs Repair">Needs Repair</option>
+                <option value="In Good Condition">In Good Condition</option>
+                <option value="Repaired">Repaired</option>
+            </select>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 transition">
+            Register Maintenance
+        </button>
+    </form>
+
+    <!-- Equipment List -->
+    <h3 class="text-2xl font-bold text-gray-800 mt-10 mb-4">Equipment Needing Maintenance</h3>
+    <div class="overflow-x-auto">
+        <table class="w-full border border-gray-300 rounded-lg shadow-sm text-left">
+            <thead class="text-gray-700">
                 <tr>
-                    <th class="border px-4 py-2">Equipment</th>
-                    <th class="border px-4 py-2">Status</th>
-                    <th class="border px-4 py-2">Action</th>
+                    <th class="px-5 py-3 border">Equipment</th>
+                    <th class="px-5 py-3 border">Status</th>
+                    <th class="px-5 py-3 border">Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-200">
                 <?php foreach ($equipment as $item): ?>
-                    <tr>
-                        <td class="border px-4 py-2"><?= htmlspecialchars($item['name']) ?></td>
-                        <td class="border px-4 py-2"><?= htmlspecialchars($item['status']) ?></td>
-                        <td class="border px-4 py-2">
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-5 py-3 border"><?= htmlspecialchars($item['name']) ?></td>
+                        <td class="px-5 py-3 border"><?= htmlspecialchars($item['status']) ?></td>
+                        <td class="px-5 py-3 border">
                             <?php if ($item['status'] == 'Needs Repair'): ?>
-                                <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg">Repair</button>
+                                <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Repair</button>
                             <?php elseif ($item['status'] == 'In Good Condition'): ?>
-                                <button class="bg-green-500 text-white px-4 py-2 rounded-lg">Good</button>
+                                <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Good</button>
                             <?php else: ?>
-                                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Repaired</button>
+                                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Repaired</button>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -148,7 +161,8 @@ $equipment = [
             </tbody>
         </table>
     </div>
-    
+</div>
+
 
 
     <script>

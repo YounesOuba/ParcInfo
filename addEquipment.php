@@ -14,9 +14,9 @@
 <body class="bg-gray-50 text-gray-800">
 <div class="md:flex hidden w-64 bg-blue-900 rounded-r-lg text-white p-6 fixed top-0 left-0 h-full shadow-lg">
         <div class="space-y-6 w-full">
-        <div class="logo w-full pb-6 border-b-2 mx-auto">
-            <h2 class="text-2xl font-extrabold">💻 ParcInfo</h2>
-        </div>
+            <div class="logo w-full border-b-2 -mt-6 mx-auto">
+                <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
+            </div>
             <div class="flex justify-between items-center">
                 <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
                 <button class="relative text-xl" aria-label="Notifications">
@@ -45,15 +45,15 @@
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                <a href="view_equipment.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Equipment</span>
                 </a>
-                <a href="assign.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Assign</span>
                 </a>
-                <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>

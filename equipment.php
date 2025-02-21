@@ -14,8 +14,8 @@
     <!-- Sidebar -->
     <div class="md:flex hidden w-64 bg-blue-900 rounded-r-lg text-white p-6 fixed top-0 left-0 h-full shadow-lg">
         <div class="space-y-6 w-full">
-            <div class="logo w-full pb-6 border-b-2 mx-auto">
-                <h2 class="text-2xl font-extrabold">💻 ParcInfo</h2>
+            <div class="logo w-full border-b-2 -mt-6 mx-auto">
+                <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
             </div>
 
             <!-- Search Bar and Notifications -->
@@ -47,15 +47,15 @@
                     <i class="fas fa-home"></i>
                     <span>Home</span>
                 </a>
-                <a href="view_equipment.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Equipment</span>
                 </a>
-                <a href="assign.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Assign</span>
                 </a>
-                <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
@@ -84,45 +84,61 @@
 
     <!-- Main Content -->
     <div class="p-6 mb-20 mt-8 ml-64 w-full mx-auto">
-        <h2 class="text-3xl font-bold text-gray-700 mb-6">Equipment List</h2>
-
+        <div class="w-full text-center">
+            <h2 class="text-3xl font-bold text-gray-700 mb-10 mx-auto">Equipment List</h2>
+        </div>
         <table class="w-full border-collapse border border-gray-300 shadow-md rounded-lg">
-            <thead>
-                <tr class="bg-gray-200">
-                    <th class="border border-gray-300 px-6 py-4">ID</th>
-                    <th class="border border-gray-300 px-6 py-4">Name</th>
-                    <th class="border border-gray-300 px-6 py-4">Category</th>
-                    <th class="border border-gray-300 px-6 py-4">Quantity</th>
-                    <th class="border border-gray-300 px-6 py-4">Description</th>
-                    <th class="border border-gray-300 px-6 py-4">Picture</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="bg-white border border-gray-300">
-                    <td class="px-6 py-4">1</td>
-                    <td class="px-6 py-4">Laptop</td>
-                    <td class="px-6 py-4">Electronics</td>
-                    <td class="px-6 py-4">5</td>
-                    <td class="px-6 py-4">Dell Latitude 5400</td>
-                    <td class="picture px-6 py-4"><img src="assets/laptop.png" alt="Laptop" class="w-16 h-16 object-cover rounded-lg"></td>
-                </tr>
-                <tr class="bg-white border border-gray-300">
-                    <td class="px-6 py-4">2</td>
-                    <td class="px-6 py-4">Projector</td>
-                    <td class="px-6 py-4">AV Equipment</td>
-                    <td class="px-6 py-4">2</td>
-                    <td class="px-6 py-4">Epson Full HD</td>
-                    <td class="picture px-6 py-4"><img src="assets/projector.png" alt="Projector" class="w-16 h-16 object-cover rounded-lg"></td>
-                </tr>
-                <tr class="bg-white border border-gray-300">
+        <thead>
+            <tr>
+                <th class="border border-gray-300 px-6 py-4">ID</th>
+                <th class="border border-gray-300 px-6 py-4">Name</th>
+                <th class="border border-gray-300 px-6 py-4">Category</th>
+                <th class="border border-gray-300 px-6 py-4">Quantity</th>
+                <th class="border border-gray-300 px-6 py-4">Description</th>
+                <th class="border border-gray-300 px-6 py-4">Picture</th>
+                <th class="border border-gray-300 px-6 py-4">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-white border border-gray-300">
+                <td class="px-6 py-4">1</td>
+                <td class="px-6 py-4">Laptop</td>
+                <td class="px-6 py-4">Electronics</td>
+                <td class="px-6 py-4">5</td>
+                <td class="px-6 py-4">Dell Latitude 5400</td>
+                <td class="picture px-6 py-4"><img src="assets/laptop.png" alt="Laptop" class="w-16 h-16 object-cover rounded-lg"></td>
+                <td class="px-6 py-4 grid text-center mx-auto">
+                    <a href="editEquipment.php?id=1" class="text-blue-500 hover:underline mr-4"><i class="fas fa-edit"></i> Edit</a>
+                    <a href="deleteEquipment.php?id=1" class="text-red-500 hover:underline"><i class="fas fa-trash"></i> Delete</a>
+                </td>
+            </tr>
+            <tr class="bg-white border border-gray-300">
+                <td class="px-6 py-4">2</td>
+                <td class="px-6 py-4">Projector</td>
+                <td class="px-6 py-4">AV Equipment</td>
+                <td class="px-6 py-4">2</td>
+                <td class="px-6 py-4">Epson Full HD</td>
+                <td class="picture px-6 py-4"><img src="assets/projector.png" alt="Projector" class="w-16 h-16 object-cover rounded-lg"></td>
+                <td class="px-6 py-4 grid text-center mx-auto"> 
+                    <a href="editEquipment.php?id=2" class="text-blue-500 hover:underline mr-4"><i class="fas fa-edit"></i> Edit</a>
+                    <a href="deleteEquipment.php?id=2" class="text-red-500 hover:underline"><i class="fas fa-trash"></i> Delete</a>
+                </td>
+            </tr>
+            <tr class="bg-white border border-gray-300">
                     <td class="px-6 py-4">3</td>
                     <td class="px-6 py-4">Office Chair</td>
                     <td class="px-6 py-4">Furniture</td>
                     <td class="px-6 py-4">10</td>
                     <td class="px-6 py-4">Ergonomic mesh chair</td>
                     <td class="picture px-6 py-4 w-16"><img src="assets/chair.png" alt="Chair" class="w-16 h-16 object-cover rounded-lg"></td>
+                    <td class="px-6 py-4 grid text-center mx-auto">
+                    <a href="editEquipment.php?id=2" class="text-blue-500 hover:underline mr-4"><i class="fas fa-edit"></i> Edit</a>
+                    <a href="deleteEquipment.php?id=2" class="text-red-500 hover:underline"><i class="fas fa-trash"></i> Delete</a>
+                </td>
                 </tr>
-            </tbody>
+        
+        </tbody>
+
         </table>
 
         <div class="mt-4">
