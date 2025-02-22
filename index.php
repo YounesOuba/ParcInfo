@@ -20,10 +20,11 @@
 </button>
 
 <!-- Sidebar -->
-<div id="sidebar" class="md:flex hidden w-64 scroll-auto bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+<div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
+
     <div class="space-y-6 w-full">
         <!-- Logo -->
-        <div class="logo w-full border-b-2 -mt-6 mx-auto">
+        <div class="logo w-full border-b-2 -mt-10 mx-auto sticky -top-6 bg-blue-900 z-10 ">
             <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
         </div>
 
@@ -68,6 +69,18 @@
                 <i class="fas fa-wrench"></i>
                 <span>Maintenance</span>
             </a>
+            <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
         </div>
 
         <!-- Settings and Logout -->
@@ -78,9 +91,8 @@
             </a>
 
 
-            <!-- زر تسجيل الخروج -->
 <!-- Logout button -->
-<a href="#" id="logoutBtn" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+<a href="#" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
     <i class="fas fa-sign-out-alt"></i>
     <span>Logout</span>
 </a>

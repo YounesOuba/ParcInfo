@@ -21,3 +21,38 @@
 }
 
 
+
+body::-webkit-scrollbar {
+    width: 0px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #555; 
+    border-radius: 6px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: #333; 
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent; 
+}
+
+
+div::-webkit-scrollbar {
+    width: 0px;
+}
+
+div::-webkit-scrollbar-thumb {
+    background: #555; 
+    border-radius: 6px;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+    background: #333; 
+}
+
+div::-webkit-scrollbar-track {
+    background: transparent; 
+}
