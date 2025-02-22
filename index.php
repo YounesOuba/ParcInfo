@@ -20,7 +20,7 @@
 </button>
 
 <!-- Sidebar -->
-<div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+<div id="sidebar" class="md:flex hidden w-64 scroll-auto bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300">
     <div class="space-y-6 w-full">
         <!-- Logo -->
         <div class="logo w-full border-b-2 -mt-6 mx-auto">
@@ -265,7 +265,7 @@
             <canvas id="barChart"></canvas>
         </div>
     </div>
-    <canvas id="lineChart" class="w-2xl bg-white mt-10 shadow-md shadow-gray-500"></canvas>
+    <canvas id="lineChart" class="w-2xl mt-10 shadow-md shadow-gray-500"></canvas>
 </div>
 </div>
 
