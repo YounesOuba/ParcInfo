@@ -76,10 +76,71 @@
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
-            <a href="logout.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
+
+
+            <!-- زر تسجيل الخروج -->
+<!-- Logout button -->
+<a href="#" id="logoutBtn" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Logout</span>
+</a>
+
+<!-- Confirmation Modal -->
+<div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
+    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
+        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
+        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
+        
+        <div class="flex justify-center gap-2 mt-2">
+            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
+            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
+            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Page elements
+    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutModal = document.getElementById("logoutModal");
+    const keepPassword = document.getElementById("keepPassword");
+    const removePassword = document.getElementById("removePassword");
+    const cancelLogout = document.getElementById("cancelLogout");
+
+    // When clicking the logout button
+    logoutBtn.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent the page from redirecting
+        logoutModal.classList.remove("hidden"); // Show the modal
+    });
+
+    // Keep the password
+    keepPassword.addEventListener("click", () => {
+        sessionStorage.removeItem("user"); // Only remove the session
+        logoutModal.classList.add("hidden"); // Hide the modal
+        alert("You have logged out, but your password is kept!"); 
+        location.reload(); // Reload the page without redirecting
+    });
+
+    // Remove password and log out
+    removePassword.addEventListener("click", () => {
+        localStorage.removeItem("password"); // Remove password from local storage
+        sessionStorage.removeItem("user"); // Remove session data
+        logoutModal.classList.add("hidden"); // Hide the modal
+        alert("You have logged out without keeping the password!");
+        location.reload(); // Reload the page without redirecting
+    });
+
+    // Cancel logout action
+    cancelLogout.addEventListener("click", () => {
+        logoutModal.classList.add("hidden"); // Hide the modal
+    });
+</script>
+
+
+
+
+
+
         </div>
     </div>
 </div>
