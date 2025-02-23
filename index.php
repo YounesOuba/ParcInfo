@@ -1,3 +1,21 @@
+<?php
+require 'config.php';
+
+$sql = "SELECT * FROM equipment"; 
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$totalEquipment = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$sql1 = "SELECT * FROM equipment WHERE status = 'Assigned'";
+$stmt1 = $pdo->prepare($sql1);
+$stmt1->execute();
+$assignedEquipment = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+
+$sql2 = "SELECT * FROM equipment WHERE status = 'Maintenance'";
+$stmt2 = $pdo->prepare($sql2);
+$stmt2->execute();
+$maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+?>
 
 
 <!DOCTYPE html>
@@ -33,7 +51,7 @@
             <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
             <button class="relative text-xl" aria-label="Notifications">
                 <i class="fas fa-bell"></i>
-                <span class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
+                <span class="absolute top-0 -mt-2 -mr-1 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
             </button>
         </div>
 
@@ -177,21 +195,21 @@
             <i class="fas fa-desktop text-4xl mr-4"></i>
             <div>
                 <h3 class="text-lg font-semibold">Total Equipment</h3>
-                <p class="text-3xl font-bold mt-2">150</p>
+                <p class="text-3xl font-bold mt-2"><?php echo count($totalEquipment); ?></p>
             </div>
         </div>
         <div class="bg-green-600 text-white p-6 rounded-lg shadow-lg flex items-center">
             <i class="fas fa-check-circle text-4xl mr-4"></i>
             <div>
                 <h3 class="text-lg font-semibold">Assigned Equipment</h3>
-                <p class="text-3xl font-bold mt-2">85</p>
+                <p class="text-3xl font-bold mt-2"><?php echo count($assignedEquipment) ?></p>
             </div>
         </div>
         <div class="bg-orange-600 text-white p-6 rounded-lg shadow-lg flex items-center">
             <i class="fas fa-tools text-4xl mr-4"></i>
             <div>
                 <h3 class="text-lg font-semibold">Under Maintenance</h3>
-                <p class="text-3xl font-bold mt-2">20</p>
+                <p class="text-3xl font-bold mt-2"><?php echo count($maintenanceEquipment) ?></p>
             </div>
         </div>
     </div>
@@ -277,7 +295,7 @@
             <canvas id="barChart"></canvas>
         </div>
     </div>
-    <canvas id="lineChart" class="w-2xl mt-10 shadow-md shadow-gray-500"></canvas>
+    <!-- <canvas id="lineChart" class="w-2xl mt-10 shadow-md shadow-gray-500"></canvas> -->
 </div>
 </div>
 
@@ -301,7 +319,7 @@
                 data: {
                     labels: ['Total Equipment', 'Assigned Equipment', 'Under Maintenance'],
                     datasets: [{
-                        data: [150, 85, 20],
+                        data: [<?php echo count($totalEquipment);?>, <?php echo count($assignedEquipment)  ?>, <?php echo count($maintenanceEquipment) ?>],
                         backgroundColor: ['#3b82f6', '#10b981', '#f97316'],
                     }]
                 },
@@ -326,7 +344,7 @@
                     labels: ['Total Equipment', 'Assigned Equipment', 'Under Maintenance'],
                     datasets: [{
                         label: 'Equipment Status',
-                        data: [150, 85, 20],
+                        data: [<?php echo count($totalEquipment);?>, <?php echo count($assignedEquipment)  ?>, <?php echo count($maintenanceEquipment) ?>],
                         backgroundColor: ['#3b82f6', '#10b981', '#f97316'],
                     }]
                 },
@@ -336,18 +354,18 @@
             });
 
 
-            new Chart(document.getElementById('lineChart'), {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                    datasets: [{
-                        label: 'Equipment Usage',
-                        data: [10, 20, 15, 25, 30],
-                        borderColor: '#3b82f6',
-                        fill: false,
-                    }]
-                },
-            });
+            // new Chart(document.getElementById('lineChart'), {
+            //     type: 'line',
+            //     data: {
+            //         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            //         datasets: [{
+            //             label: 'Equipment Usage',
+            //             data: [10, 20, 15, 25, 30],
+            //             borderColor: '#3b82f6',
+            //             fill: false,
+            //         }]
+            //     },
+            // });
 
         //dark mode
         document.getElementById('darkModeToggle').addEventListener('click', function() {

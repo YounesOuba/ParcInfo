@@ -1,3 +1,58 @@
+<?php
+
+require 'config.php';
+
+// Fetch available equipment
+$equipmentQuery = "SELECT id, name FROM equipment WHERE status = 'available'";
+$equipmentStmt = $pdo->prepare($equipmentQuery);
+$equipmentStmt->execute();
+$equipmentList = $equipmentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch users
+$userQuery = "SELECT user_id, name FROM users";
+$userStmt = $pdo->prepare($userQuery);
+$userStmt->execute();
+$userList = $userStmt->fetchAll(PDO::FETCH_ASSOC);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $equipment = $_POST["equipment"];
+    $user = $_POST["user"];
+    $assignment_date = $_POST["assignment_date"];
+
+    error_log("Form submitted with equipment: $equipment, user: $user, assignment_date: $assignment_date");
+
+    if (!empty($equipment) && !empty($user) && !empty($assignment_date)) {
+        $pdo->beginTransaction();
+        try {
+            // Insert assignment record
+            $sql = "INSERT INTO assignments (equipment_id, user_id, assigned_date) VALUES (:equipment, :user, :assignment_date)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':equipment', $equipment);
+            $stmt->bindParam(':user', $user);
+            $stmt->bindParam(':assignment_date', $assignment_date);
+            $stmt->execute();
+
+            // Update equipment status to 'assigned'
+            $updateEquipmentStatus = "UPDATE equipment SET status = 'assigned' WHERE id = :equipment";
+            $updateStmt = $pdo->prepare($updateEquipmentStatus);
+            $updateStmt->bindParam(':equipment', $equipment);
+            $updateStmt->execute();
+
+            $pdo->commit();
+            $message = "<p class='text-green-600 font-bold text-center'>Equipment assigned successfully!</p>";
+            error_log("Equipment assigned successfully!");
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            $message = "<p class='text-red-600 font-bold text-center'>Error: " . $e->getMessage() . "</p>";
+            error_log("Error: " . $e->getMessage());
+        }
+    } else {
+        $message = "<p class='text-red-600 font-bold text-center'>All fields are required!</p>";
+        error_log("All fields are required!");
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,19 +147,16 @@
     <div class="ml-64 p-12 mb-32 mt-16 w-full flex justify-center items-center">
         <div class="bg-white p-8 rounded-lg shadow-md shadow-gray-500 w-full max-w-3xl">
             <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Assign Equipment</h2>
+            <?php if (isset($message)) echo $message; ?>
             <form id="assignForm" action="#" method="POST" class="space-y-5 w-2xl mx-auto">
                 <!-- Equipment Selection -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-2">Select Equipment</label>
                     <select name="equipment" class="w-full bg-gray-50 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
                         <option value="">-- Choose Equipment --</option>
-                        <option value="laptop">Laptop</option>
-                        <option value="printer">Printer</option>
-                        <option value="monitor">Monitor</option>
-                        <option value="keyboard">Keyboard</option>
-                        <option value="mouse">Mouse</option>
-                        <option value="accesspoint">Access Point</option>
-                        <option value="router">Router</option>
+                        <?php foreach ($equipmentList as $equipment): ?>
+                            <option value="<?= $equipment['id'] ?>"><?= htmlspecialchars($equipment['name']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -113,11 +165,9 @@
                     <label class="block text-gray-700 font-medium mb-2">Assign to User</label>
                     <select name="user" class="w-full p-3 border bg-gray-50 rounded-lg focus:ring-2 focus:ring-blue-500" required>
                         <option value="">-- Choose User --</option>
-                        <option value="user1">User 1</option>
-                        <option value="user2">User 2</option>
-                        <option value="user3">User 3</option>
-                        <option value="user4">User 4</option>
-                        <option value="user5">User 5</option>
+                        <?php foreach ($userList as $user): ?>
+                            <option value="<?= $user['user_id'] ?>"><?= htmlspecialchars($user['name']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 

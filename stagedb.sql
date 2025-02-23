@@ -29,11 +29,16 @@ CREATE TABLE `equipment` (
   `brand` varchar(50) DEFAULT NULL,
   `model` varchar(50) DEFAULT NULL,
   `serial_number` varchar(100) DEFAULT NULL,
-  `status` enum('available','assigned','in_maintenance','retired') DEFAULT 'available',
+  `status` enum('available','assigned','maintenance','retired') DEFAULT 'available',
   `purchase_date` date DEFAULT NULL,
   `supplier_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+ALTER TABLE `equipment`
+ADD COLUMN `equipment_image` VARCHAR(255) NOT NULL;
 
 -- --------------------------------------------------------
 

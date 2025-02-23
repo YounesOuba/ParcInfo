@@ -1,3 +1,19 @@
+<?php
+
+require 'config.php';
+
+// Fetch equipment data along with assigned user data from the database
+$query = "
+    SELECT e.*, u.name AS assigned_user
+    FROM equipment e
+    LEFT JOIN assignments a ON e.id = a.equipment_id
+    LEFT JOIN users u ON a.user_id = u.id
+";
+$stmt = $pdo->prepare($query);
+$stmt->execute();
+$equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,8 +52,6 @@
                     <a href="logout.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
-
-
 
             <div class="space-y-4 mt-6">
                 <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
@@ -79,7 +93,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="p-6 mb-20 mt-8 ml-64 w-full mx-auto">
+    <div class="p-6 mb-20 mt-8 ml-32 w-full mx-auto">
         <div class="w-full text-center">
             <h2 class="text-3xl font-bold text-gray-700 mb-10 mx-auto">Equipment List</h2>
         </div>
@@ -94,50 +108,34 @@
                     <th class="border border-gray-300 px-6 py-4">ID</th>
                     <th class="border border-gray-300 px-6 py-4">Name</th>
                     <th class="border border-gray-300 px-6 py-4">Category</th>
-                    <th class="border border-gray-300 px-6 py-4">Quantity</th>
-                    <th class="border border-gray-300 px-6 py-4">Description</th>
+                    <th class="border border-gray-300 px-6 py-4">Brand</th>
+                    <th class="border border-gray-300 px-6 py-4">Model</th>
                     <th class="border border-gray-300 px-6 py-4">Picture</th>
+                    <th class="border border-gray-300 px-6 py-4">Status</th>
+                    <th class="border border-gray-300 px-6 py-4">Assigned User</th>
                     <th class="border border-gray-300 px-6 py-4">Actions</th>
                 </tr>
             </thead>
             <tbody id="equipmentTable">
-                <tr class="bg-white border border-gray-300">
-                    <td class="px-6 py-4">1</td>
-                    <td class="px-6 py-4">Laptop</td>
-                    <td class="px-6 py-4">Electronics</td>
-                    <td class="px-6 py-4">5</td>
-                    <td class="px-6 py-4">Dell Latitude 5400</td>
-                    <td class="picture px-6 py-4"><img src="assets/laptop.png" alt="Laptop" class="w-16 h-16 object-cover rounded-lg"></td>
-                    <td class="px-6 py-4 grid text-center mx-auto">
-                        <a href="editEquipment.php?id=1" class="text-blue-500 hover:underline mr-4"><i class="fas fa-edit"></i> Edit</a>
-                        <a href="deleteEquipment.php?id=1" class="text-red-500 hover:underline"><i class="fas fa-trash"></i> Delete</a>
-                    </td>
-                </tr>
-                <tr class="bg-white border border-gray-300">
-                <td class="px-6 py-4">2</td>
-                <td class="px-6 py-4">Projector</td>
-                <td class="px-6 py-4">AV Equipment</td>
-                <td class="px-6 py-4">2</td>
-                <td class="px-6 py-4">Epson Full HD</td>
-                <td class="picture px-6 py-4"><img src="assets/projector.png" alt="Projector" class="w-16 h-16 object-cover rounded-lg"></td>
-                <td class="px-6 py-4 grid text-center mx-auto"> 
-                    <a href="editEquipment.php?id=2" class="text-blue-500 hover:underline mr-4"><i class="fas fa-edit"></i> Edit</a>
-                    <a href="deleteEquipment.php?id=2" class="text-red-500 hover:underline"><i class="fas fa-trash"></i> Delete</a>
-                </td>
-            </tr>
-            <tr class="bg-white border border-gray-300">
-                    <td class="px-6 py-4">3</td>
-                    <td class="px-6 py-4">Office Chair</td>
-                    <td class="px-6 py-4">Furniture</td>
-                    <td class="px-6 py-4">10</td>
-                    <td class="px-6 py-4">Ergonomic mesh chair</td>
-                    <td class="picture px-6 py-4 w-16"><img src="assets/chair.png" alt="Chair" class="w-16 h-16 object-cover rounded-lg"></td>
-                    <td class="px-6 py-4 grid text-center mx-auto">
-                    <a href="editEquipment.php?id=2" class="text-blue-500 hover:underline mr-4"><i class="fas fa-edit"></i> Edit</a>
-                    <a href="deleteEquipment.php?id=2" class="text-red-500 hover:underline"><i class="fas fa-trash"></i> Delete</a>
-                </td>
-            </tr>
-                <!-- Add more rows as needed -->
+                <?php
+                // Loop through the equipment data and display it in the table
+                foreach ($equipmentData as $equipment) {
+                    echo "<tr class='bg-white border border-gray-300'>";
+                    echo "<td class='px-6 py-4'>{$equipment['id']}</td>";
+                    echo "<td class='px-6 py-4'>{$equipment['name']}</td>";
+                    echo "<td class='px-6 py-4'>{$equipment['category']}</td>";
+                    echo "<td class='px-6 py-4'>{$equipment['brand']}</td>";
+                    echo "<td class='px-6 py-4'>{$equipment['model']}</td>";
+                    echo "<td class='px-6 py-4'><img src='{$equipment['equipment_image']}' alt='{$equipment['name']}' class='w-16 h-16 object-cover rounded-lg'></td>";
+                    echo "<td class='px-6 py-4'>{$equipment['status']}</td>";
+                    echo "<td class='px-6 py-4'>" . (!empty($equipment['assigned_user']) ? $equipment['assigned_user'] : 'Not Assigned') . "</td>";
+                    echo "<td class='px-6 py-4 grid text-center mx-auto'>
+                            <a href='editEquipment.php?id={$equipment['id']}' class='text-blue-500 hover:underline mr-4'><i class='fas fa-edit'></i> Edit</a>
+                            <a href='deleteEquipment.php?id={$equipment['id']}' class='text-red-500 hover:underline'><i class='fas fa-trash'></i> Delete</a>
+                        </td>";
+                    echo "</tr>";
+                }
+                ?>
             </tbody>
         </table>
         <!-- Add New Equipment Button -->
@@ -158,46 +156,21 @@
                 row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
         });
-
+ 
         // Toggle menu
         document.getElementById('userDropdownButton').addEventListener('click', function() {
             document.getElementById('userDropdownMenu').classList.toggle('hidden');
         });
 
-        // Dark Mode    
-        let toggledarkmode = document.getElementById('darkModeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('bg-gray-800');
-            document.body.classList.toggle('text-gray-200');
-            document.body.classList.toggle('bg-gray-50');
-            document.body.classList.toggle('text-gray-800');
-
-            var icon = document.getElementById('darkModeIcon');
-            if (icon.classList.contains('fa-moon')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
-
-            document.querySelectorAll('.bg-white').forEach(element => {
-                element.classList.toggle('dark:bg-gray-800');
-                element.classList.toggle('dark:text-gray-200');
-            });
-
-            document.querySelectorAll('.text-gray-700').forEach(element => {
-                element.classList.toggle('dark:text-gray-300');
-            });
-            document.querySelectorAll('.border').forEach(element => {
-                element.classList.toggle('dark:border-gray-600');
-            });
-
-            document.querySelectorAll('input, select, textarea').forEach(element => {
-                element.classList.toggle('bg-gray-900');
-                element.classList.toggle('text-white');
-                element.classList.toggle('border-gray-600');
-            });
+        // Dark Mode Toggle
+        const darkModeButton = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        darkModeButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            darkModeIcon.classList.toggle('fa-moon');
+            darkModeIcon.classList.toggle('fa-sun');
         });
     </script>
+
 </body>
 </html>

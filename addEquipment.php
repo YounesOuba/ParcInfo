@@ -1,3 +1,76 @@
+<?php
+
+require 'config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Getting POST values from the form
+    $equipment_name = $_POST['equipment_name'];
+    $category = $_POST['category'];
+    $brand = $_POST['brand'];  
+    $model = $_POST['model'];  
+    $serial_number = $_POST['serial_number'];
+    $status = $_POST['status'];
+    $purchase_date = $_POST['purchase_date'];
+    $supplier_id = $_POST['supplier_id'];  
+
+    // Handling image upload
+    $image = $_FILES['equipment_image'];
+    $image_name = $image['name'];
+    $image_tmp = $image['tmp_name'];
+    $image_size = $image['size'];
+    $image_error = $image['error'];
+
+    // Check for image upload errors
+    if ($image_error === 0) {
+        $image_ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+        $allowed_exts = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (in_array($image_ext, $allowed_exts)) {
+            if ($image_size <= 5000000) { // Max size 5MB
+                $new_image_name = uniqid('', true) . '.' . $image_ext;
+                $image_destination = 'uploads/' . $new_image_name;
+                move_uploaded_file($image_tmp, $image_destination);
+            } else {
+                echo "File size is too large!";
+                exit;
+            }
+        } else {
+            echo "Invalid image type!";
+            exit;
+        }
+    } else {
+        echo "Error uploading image!";
+        exit;
+    }
+
+    // Prepare the SQL statement
+    $sql = "INSERT INTO equipment (name, category, brand, model, serial_number, status, purchase_date, supplier_id, created_at, equipment_image) 
+            VALUES (:name, :category, :brand, :model, :serial_number, :status, :purchase_date, :supplier_id, CURRENT_TIMESTAMP(), :equipment_image)";
+
+    // Prepare the statement
+    $stmt = $pdo->prepare($sql);
+
+    // Bind parameters
+    $stmt->bindParam(':name', $equipment_name);
+    $stmt->bindParam(':category', $category);
+    $stmt->bindParam(':brand', $brand);
+    $stmt->bindParam(':model', $model);
+    $stmt->bindParam(':serial_number', $serial_number);
+    $stmt->bindParam(':status', $status);
+    $stmt->bindParam(':purchase_date', $purchase_date);
+    $stmt->bindParam(':supplier_id', $supplier_id);
+    $stmt->bindParam(':equipment_image', $image_destination);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        echo "Equipment added successfully!";
+    } else {
+        echo "Error adding equipment!";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,7 +165,8 @@
     <div class="ml-64 p-6 mb-20 mt-8">
         <h2 class="text-4xl font-bold text-center mb-16 text-blue-950">Add Equipment</h2>
         <div class="bg-white p-6 rounded-lg shadow-md shadow-gray-500">
-            <form id="equipmentForm" action="#" method="POST" class="grid md:grid-cols-2 gap-6">
+
+            <form id="equipmentForm" action="addEquipment.php" method="POST" enctype="multipart/form-data" class="grid md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-gray-700 font-semibold">Equipment Name</label>
                     <input type="text" name="equipment_name" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
@@ -105,6 +179,14 @@
                         <option>Monitors</option>
                         <option>Speakers</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold">Brand</label>
+                    <input type="text" name="brand" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold">Model</label>
+                    <input type="text" name="model" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-semibold">Serial Number</label>
@@ -120,11 +202,17 @@
                         <option>Available</option>
                         <option>Assigned</option>
                         <option>Maintenance</option>
+                        <option>Retired</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold">Supplier ID</label>
+                    <input type="number" min="1" name="supplier_id" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
                 </div>
                 <div>
                     <label class="block font-medium mb-1">Upload Picture</label>
                     <input type="file" name="equipment_image" accept="image/*" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-600">
+                    <img id="imagePreview" class="mt-4 hidden w-32 h-32 object-cover rounded-md" />
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-gray-700 font-semibold">Description</label>
@@ -222,7 +310,8 @@
                 setTimeout(() => {
                     hideSpinner();
                     alert('Equipment added successfully!');
-                }, 3000); // Simulate a 3-second delay
+                    form.submit(); // Submit the form after the spinner is hidden
+                }, 2000); // Simulate a 3-second delay
             });
 
             function showSpinner() {
@@ -231,6 +320,19 @@
 
             function hideSpinner() {
                 loadingSpinner.classList.add('hidden');
+            }
+        });
+
+        document.querySelector('input[name="equipment_image"]').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = reader.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         });
     </script>
