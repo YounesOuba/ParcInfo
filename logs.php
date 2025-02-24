@@ -1,19 +1,16 @@
 <?php
 include 'db.php';
 
-$sql = "SELECT logs.id, users.name, logs.action, logs.timestamp 
+$sql = "SELECT logs.id, informations.Full_Name AS name, logs.action, logs.timestamp 
         FROM logs 
-        JOIN users ON logs.user_id = users.id"; // التأكد من العلاقة الصحيحة بين logs و users
+        JOIN informations ON logs.user_id = informations.id"; 
 
 $result = $conn->query($sql);
 
 if (!$result) {
-    die("خطأ في الاستعلام: " . $conn->error);
+    die("Error in query: " . $conn->error);
 }
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -149,12 +146,12 @@ if (!$result) {
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                     <tr class="hover:bg-gray-100">
-                        <td class="p-2 border"><?= $row['username'] ?></td>
-                        <td class="p-2 border"><?= $row['action_type'] ?></td>
-                        <td class="p-2 border"><?= $row['table_name'] ?></td>
-                        <td class="p-2 border"><?= $row['record_id'] ?></td>
-                        <td class="p-2 border"><?= $row['description'] ?></td>
-                        <td class="p-2 border"><?= $row['action_time'] ?></td>
+                        <td class="p-2 border"><?= htmlspecialchars($row['name']) ?></td>
+                        <td class="p-2 border"><?= htmlspecialchars($row['action']) ?></td>
+                        <td class="p-2 border"><?= htmlspecialchars($row['table_name']) ?></td>
+                        <td class="p-2 border"><?= htmlspecialchars($row['record_id']) ?></td>
+                        <td class="p-2 border"><?= htmlspecialchars($row['description']) ?></td>
+                        <td class="p-2 border"><?= htmlspecialchars($row['timestamp']) ?></td>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>
