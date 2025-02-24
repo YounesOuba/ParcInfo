@@ -1,3 +1,14 @@
+<?php
+require 'db.php'; // الاتصال بقاعدة البيانات
+
+// جلب الطلبات من قاعدة البيانات
+$sql = "SELECT orders.id, suppliers.name AS supplier, orders.order_date, orders.total_amount, orders.status 
+        FROM orders 
+        JOIN suppliers ON orders.supplier_id = suppliers.id
+        ORDER BY orders.order_date DESC";
+$result = $conn->query($sql);
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,11 +76,26 @@
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
+            
+
+            <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
+
             </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="settings.php class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Settings</span>
                 </a>
@@ -224,3 +250,6 @@
     </script>
 </body>
 </html>
+
+
+

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 require 'config.php';
@@ -52,6 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+=======
+>>>>>>> db635ff (new)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -112,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fas fa-cogs"></i>
                     <span>Equipment</span>
                 </a>
-                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="assign.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Assign</span>
                 </a>
@@ -120,7 +123,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
-            </div>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
+        </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
@@ -147,6 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="ml-64 p-12 mb-32 mt-16 w-full flex justify-center items-center">
         <div class="bg-white p-8 rounded-lg shadow-md shadow-gray-500 w-full max-w-3xl">
             <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Assign Equipment</h2>
+<<<<<<< HEAD
             <?php if (isset($message)) echo $message; ?>
             <form id="assignForm" action="#" method="POST" class="space-y-5 w-2xl mx-auto">
                 <!-- Equipment Selection -->
@@ -170,18 +186,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php endforeach; ?>
                     </select>
                 </div>
+=======
+            <form id="assignForm" action="assign.php" method="POST" class="space-y-5 w-2xl mx-auto">
+    <!-- Equipment Selection -->
+    <div>
+        <label class="block text-gray-700 font-medium mb-2">Select Equipment</label>
+        <select name="equipment" class="w-full bg-gray-50 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            <option value="">-- Choose Equipment --</option>
+            <option value="1">Laptop</option>
+            <option value="2">Printer</option>
+            <option value="3">Monitor</option>
+            <option value="4">Keyboard</option>
+            <option value="5">Mouse</option>
+            <option value="6">Access Point</option>
+            <option value="7">Router</option>
+        </select>
+    </div>
 
-                <!-- Assignment Date -->
-                <div>
-                    <label class="block text-gray-700 font-medium mb-2">Assignment Date</label>
-                    <input type="date" name="assignment_date" class="w-full bg-gray-50 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                </div>
+    <!-- User Selection -->
+    <div>
+        <label class="block text-gray-700 font-medium mb-2">Assign to User</label>
+        <select name="user" class="w-full p-3 border bg-gray-50 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            <option value="">-- Choose User --</option>
+            <option value="1">User 1</option>
+            <option value="2">User 2</option>
+            <option value="3">User 3</option>
+            <option value="4">User 4</option>
+            <option value="5">User 5</option>
+        </select>
+    </div>
+>>>>>>> db635ff (new)
 
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300 font-bold">
-                    Assign Equipment
-                </button>
-            </form>
+    <!-- Assignment Date -->
+    <div>
+        <label class="block text-gray-700 font-medium mb-2">Assignment Date</label>
+        <input type="date" name="assignment_date" class="w-full bg-gray-50 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300 font-bold">
+        Assign Equipment
+    </button>
+</form>
+
         </div>
     </div>
 

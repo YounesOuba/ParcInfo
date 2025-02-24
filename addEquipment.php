@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 
 require 'config.php';
 
@@ -71,6 +72,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+=======
+require 'db.php'; // استدعاء الاتصال بقاعدة البيانات
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['equipment_name'];
+    $category = $_POST['category'];
+    $serial_number = $_POST['serial_number'];
+    $purchase_date = $_POST['purchase_date'];
+    $status = $_POST['status'];
+    $description = $_POST['description'];
+
+    // معالجة الصورة المرفوعة
+    $image_path = NULL;
+    if (!empty($_FILES["equipment_image"]["name"])) {
+        $target_dir = "uploads/";
+        $image_path = $target_dir . basename($_FILES["equipment_image"]["name"]);
+        move_uploaded_file($_FILES["equipment_image"]["tmp_name"], $image_path);
+    }
+
+    // تجهيز الاستعلام وإدخال البيانات
+    $sql = "INSERT INTO equipment (name, category, serial_number, status, purchase_date, description, image)
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssss", $name, $category, $serial_number, $status, $purchase_date, $description, $image_path);
+
+    if ($stmt->execute()) {
+        echo json_encode(["success" => true, "message" => "Equipment added successfully"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Error adding equipment: " . $conn->error]);
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
+
+
+
+
+
+>>>>>>> db635ff (new)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,11 +182,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
             </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Settings</span>
                 </a>
@@ -165,8 +221,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="ml-64 p-6 mb-20 mt-8">
         <h2 class="text-4xl font-bold text-center mb-16 text-blue-950">Add Equipment</h2>
         <div class="bg-white p-6 rounded-lg shadow-md shadow-gray-500">
+<<<<<<< HEAD
 
             <form id="equipmentForm" action="addEquipment.php" method="POST" enctype="multipart/form-data" class="grid md:grid-cols-2 gap-6">
+=======
+        <form id="equipmentForm" action="add_equipment.php" method="POST" enctype="multipart/form-data">
+>>>>>>> db635ff (new)
                 <div>
                     <label class="block text-gray-700 font-semibold">Equipment Name</label>
                     <input type="text" name="equipment_name" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
@@ -230,6 +290,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
+        
+ 
         // Ensure the DOM is fully loaded before running the script
         document.addEventListener('DOMContentLoaded', function () {
             // Toggle Sidebar on Mobile
@@ -322,6 +384,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 loadingSpinner.classList.add('hidden');
             }
         });
+<<<<<<< HEAD
 
         document.querySelector('input[name="equipment_image"]').addEventListener('change', function (event) {
             const file = event.target.files[0];
@@ -335,6 +398,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reader.readAsDataURL(file);
             }
         });
+=======
+        
+
+>>>>>>> db635ff (new)
     </script>
 </body>
 </html>

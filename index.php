@@ -83,7 +83,7 @@ $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
                 <i class="fas fa-clipboard-list"></i>
                 <span>Assign</span>
             </a>
-            <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-wrench"></i>
                 <span>Maintenance</span>
             </a>

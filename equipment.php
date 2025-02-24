@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 require 'config.php';
@@ -13,6 +14,9 @@ $stmt = $pdo->prepare($query);
 $stmt->execute();
 $equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+=======
+
+>>>>>>> db635ff (new)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -69,6 +73,18 @@ $equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
+                </a>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
                 </a>
             </div>
 

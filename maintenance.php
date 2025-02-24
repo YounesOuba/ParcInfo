@@ -1,4 +1,5 @@
 <?php
+
 // معالجة البيانات عند إرسال النموذج
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // استلام البيانات من النموذج
@@ -17,6 +18,14 @@ $equipment = [
     ['name' => 'Router', 'status' => 'Needs Repair'],
 ];
 ?>
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,11 +82,23 @@ $equipment = [
                     <i class="fas fa-clipboard-list"></i>
                     <span>Assign</span>
                 </a>
-                <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
-            </div>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
+        </div>
 
             <div class="mt-8 space-y-4">
                 <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
