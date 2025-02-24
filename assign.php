@@ -148,7 +148,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="bg-white p-8 rounded-lg shadow-md shadow-gray-500 w-full max-w-3xl">
             <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Assign Equipment</h2>
             <?php if (isset($message)) echo $message; ?>
-            <form id="assignForm" action="#" method="POST" class="space-y-5 w-2xl mx-auto">
+            <form id="assignForm" action="assign.php" method="POST" class="space-y-5 w-2xl mx-auto">
                 <!-- Equipment Selection -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-2">Select Equipment</label>
@@ -281,7 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Simulate form submission (replace with actual submission logic)
                 setTimeout(() => {
                     hideSpinner();
-                    alert('Equipment assigned successfully!');
+                    form.submit(); // Submit the form after the spinner is hidden
                 }, 3000); // Simulate a 3-second delay
             });
 

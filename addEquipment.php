@@ -309,9 +309,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Simulate form submission (replace with actual submission logic)
                 setTimeout(() => {
                     hideSpinner();
-                    alert('Equipment added successfully!');
                     form.submit(); // Submit the form after the spinner is hidden
-                }, 2000); // Simulate a 3-second delay
+                }, 2000); // Simulate a 2-second delay
             });
 
             function showSpinner() {

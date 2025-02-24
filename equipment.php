@@ -1,14 +1,25 @@
 <?php
-
 require 'config.php';
+session_start();
 
-// Fetch equipment data along with assigned user data from the database
+// Fetch logged-in user
+$userId = $_SESSION['user_id'] ?? null;
+if ($userId) {
+    $stmt = $pdo->prepare("SELECT name FROM users WHERE user_id = ?");
+    $stmt->execute([$userId]);
+    $fullName = $stmt->fetchColumn();
+} else {
+    $fullName = "Guest";
+}
+
+// Fetch equipment and assigned users
 $query = "
     SELECT e.*, u.name AS assigned_user
     FROM equipment e
     LEFT JOIN assignments a ON e.id = a.equipment_id
-    LEFT JOIN users u ON a.user_id = u.id
+    LEFT JOIN users u ON a.user_id = u.user_id
 ";
+
 $stmt = $pdo->prepare($query);
 $stmt->execute();
 $equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
