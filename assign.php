@@ -52,7 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fas fa-cogs"></i>
                     <span>Equipment</span>
                 </a>
-                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="assign.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-clipboard-list"></i>
                     <span>Assign</span>
                 </a>
@@ -120,7 +119,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
-            </div>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
+        </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
@@ -171,17 +182,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </select>
                 </div>
 
-                <!-- Assignment Date -->
-                <div>
-                    <label class="block text-gray-700 font-medium mb-2">Assignment Date</label>
-                    <input type="date" name="assignment_date" class="w-full bg-gray-50 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                </div>
+    <!-- Assignment Date -->
+    <div>
+        <label class="block text-gray-700 font-medium mb-2">Assignment Date</label>
+        <input type="date" name="assignment_date" class="w-full bg-gray-50 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+    </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300 font-bold">
-                    Assign Equipment
-                </button>
-            </form>
+    <!-- Submit Button -->
+    <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300 font-bold">
+        Assign Equipment
+    </button>
+</form>
+
         </div>
     </div>
 

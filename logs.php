@@ -1,3 +1,19 @@
+<?php
+include 'db.php';
+
+$sql = "SELECT logs.id, users.name, logs.action, logs.timestamp 
+        FROM logs 
+        JOIN users ON logs.user_id = users.id"; // التأكد من العلاقة الصحيحة بين logs و users
+
+$result = $conn->query($sql);
+
+if (!$result) {
+    die("خطأ في الاستعلام: " . $conn->error);
+}
+?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -64,6 +80,18 @@
                 <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
+                </a>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
                 </a>
             </div>
 

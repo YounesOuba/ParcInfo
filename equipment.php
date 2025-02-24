@@ -38,7 +38,7 @@ $equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen">
 
-<div class="md:flex hidden w-64 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg">
+<div class="md:flex hidden w-68 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg">
         <div class="space-y-6 w-full">
         <div class="logo w-full border-b-2 -mt-6 mx-auto">
             <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
@@ -80,6 +80,18 @@ $equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
+                </a>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
                 </a>
             </div>
 

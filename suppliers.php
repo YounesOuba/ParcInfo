@@ -1,3 +1,45 @@
+<?php
+include 'db.php'; // ربط قاعدة البيانات
+
+// إضافة Supplier
+if (isset($_POST['add_supplier'])) {
+    $name = $_POST['name'];
+    $contact = $_POST['contact'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+
+    // إدخال البيانات في قاعدة البيانات
+    $sql = "INSERT INTO suppliers (name, contact_person, phone, email, address)
+            VALUES ('$name', '$contact', '$phone', '$email', '$address')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "New supplier added successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+
+// حذف Supplier
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    $sql = "DELETE FROM suppliers WHERE id = $delete_id";
+    if ($conn->query($sql) === TRUE) {
+        echo "Supplier deleted successfully";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
+
+// استرجاع جميع الموردين
+$sql = "SELECT * FROM suppliers";
+$result = $conn->query($sql);
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,6 +105,19 @@
                 <a href="maintenance.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
+                </a>
+            
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
                 </a>
             </div>
 

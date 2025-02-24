@@ -1,5 +1,4 @@
 <?php
-
 require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -71,6 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+
+
+>>>>>>> db635ff (new)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,11 +140,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
             </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Settings</span>
                 </a>
@@ -165,7 +179,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="ml-64 p-6 mb-20 mt-8">
         <h2 class="text-4xl font-bold text-center mb-16 text-blue-950">Add Equipment</h2>
         <div class="bg-white p-6 rounded-lg shadow-md shadow-gray-500">
-
             <form id="equipmentForm" action="addEquipment.php" method="POST" enctype="multipart/form-data" class="grid md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-gray-700 font-semibold">Equipment Name</label>
@@ -230,6 +243,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
+        
+ 
         // Ensure the DOM is fully loaded before running the script
         document.addEventListener('DOMContentLoaded', function () {
             // Toggle Sidebar on Mobile
@@ -334,6 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 reader.readAsDataURL(file);
             }
         });
+
     </script>
 </body>
 </html>
