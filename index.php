@@ -78,8 +78,8 @@ if (!isset($_SESSION['Email'])) {
                 <p class="UserText">IT Department</p>
             </div>
             <div class="absolute top-16 left-0 bg-white text-gray-800 p-4 rounded-lg shadow-lg hidden" id="userDropdownMenu">
-                <a href="settings.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-cogs"></i> Settings</a>
-                <a href="logout.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="settings.php" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-cogs"></i> Settings</a>
+                <a href="logout.php" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
 
@@ -122,7 +122,7 @@ if (!isset($_SESSION['Email'])) {
 
         <!-- Settings and Logout -->
         <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
@@ -238,7 +238,7 @@ function confirmLogout() {
             <i class="fas fa-list text-2xl mb-2"></i>
             View Equipment
         </a>
-        <a href="assign.html" class="bg-green-700 text-white text-center p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex flex-col items-center">
+        <a href="assign.php" class="bg-green-700 text-white text-center p-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 flex flex-col items-center">
             <i class="fas fa-user-check text-2xl mb-2"></i>
             Assign Equipment
         </a>

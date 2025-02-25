@@ -154,13 +154,14 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Main Content -->
-    <div class="p-8 rounded-lg shadow-md shadow-gray-500 mx-auto mt-10 w-full">
+    <div class="p-8 rounded-lg shadow-md shadow-gray-500 mx-auto ml-32
+     mt-10 w-full">
         <div class="text-center mb-6">
             <h2 class="text-3xl font-bold text-gray-700">Maintenance Management</h2>
         </div>
 
         <!-- Form: Add New Maintenance -->
-        <form action="maintenance.php" method="POST" class="space-y-5 w-2xl mx-auto">
+        <form action="maintenance.php" method="POST" class="space-y-5 w-3xl mx-auto">
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Equipment</label>
                 <select name="equipment_id" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
@@ -198,7 +199,7 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </button>
         </form>
 
-        <!-- Maintenance Progress -->
+        <!-- Maintenance Progress
         <div class="mt-8">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">Maintenance Progress</h3>
             <div class="space-y-4">
@@ -215,7 +216,7 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Equipment List -->
         <h3 class="text-2xl font-bold text-gray-800 mt-10 mb-4">Equipment Needing Maintenance</h3>

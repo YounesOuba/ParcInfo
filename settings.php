@@ -1,3 +1,32 @@
+<?php
+// تضمين ملف الاتصال
+include 'db.php';
+
+// التحقق إذا كانت البيانات تم إرسالها عبر POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // الحصول على البيانات من الـ form
+    $equipment_name = $_POST['equipment_name'];
+    $equipment_type = $_POST['equipment_type'];
+    $equipment_description = $_POST['equipment_description'];
+
+    // تحضير استعلام الإدخال
+    $sql = "INSERT INTO equipment (name, type, description) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $equipment_name, $equipment_type, $equipment_description);
+
+    // تنفيذ الاستعلام
+    if ($stmt->execute()) {
+        echo "Equipment added successfully!";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    // إغلاق الاتصال
+    $stmt->close();
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

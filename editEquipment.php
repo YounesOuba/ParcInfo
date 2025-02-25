@@ -64,16 +64,6 @@ if (isset($_GET['id'])) {
     }
 }
 
-if (!isset($_SESSION['Email'])) {
-    header("Location: ./StageFolder/signin.php");
-    exit();
-} else {
-    $Email = $_SESSION['Email'];
-    $fullName = $pdo->prepare("SELECT Full_Name, Email FROM `informations` WHERE Email = :Email");
-    $fullName->bindParam(':Email', $Email);
-    $fullName->execute();
-    $Name = $fullName->fetch(PDO::FETCH_ASSOC);
-}
 ?>
 
 <!DOCTYPE html>

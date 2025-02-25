@@ -199,8 +199,7 @@ $result = $pdo->query($sql);
                         <td class="p-2 border"><?= htmlspecialchars($row['status']) ?></td>
                         <td class="p-2 border">$<?= htmlspecialchars($row['total_amount']) ?></td>
                         <td class="p-2 border text-center">
-                            <a href="view_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-blue-600 hover:underline">View</a>
-                            <a href="edit_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-blue-600 hover:underline ml-2">Edit</a>
+                            <a href="edit_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-blue-600 hover:underline ml-2"><i class="fas fa-pen"></i> Edit</a>
                         </td>
                     </tr>
                     <?php endwhile; ?>
