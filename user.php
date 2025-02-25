@@ -1,35 +1,11 @@
 <?php
-require 'config.php'; 
+require 'config.php';
 
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $supplier_id = $_POST['supplier_id'];
-    $order_date = $_POST['order_date'];
-    $total_amount = $_POST['total_amount'];
-    $status = $_POST['status'];
-
-    // Insert the new order into the database
-    $stmt = $pdo->prepare("INSERT INTO orders (supplier_id, order_date, total_amount, status) VALUES (:supplier_id, :order_date, :total_amount, :status)");
-    $stmt->bindParam(':supplier_id', $supplier_id);
-    $stmt->bindParam(':order_date', $order_date);
-    $stmt->bindParam(':total_amount', $total_amount);
-    $stmt->bindParam(':status', $status);
-    $stmt->execute();
-
-    echo "Order added successfully!";
-}
-
-// Fetch suppliers data from the database
-$stmt = $pdo->prepare("SELECT id, name FROM suppliers");
+// Fetch users from the database
+$sql = "SELECT user_id, name, email, role, created_at FROM users";
+$stmt = $pdo->prepare($sql);
 $stmt->execute();
-$suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Fetch orders data from the database
-$sql = "SELECT orders.id, suppliers.name AS supplier, orders.order_date, orders.total_amount, orders.status 
-        FROM orders 
-        JOIN suppliers ON orders.supplier_id = suppliers.id
-        ORDER BY orders.order_date DESC";
-$result = $pdo->query($sql);
+$users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -37,12 +13,13 @@ $result = $pdo->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Orders</title>
+    <title>View Users</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/e3915d69f3.js" crossorigin="anonymous"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 min-h-screen flex justify-center items-center">
 
      <!-- Sidebar Toggle Button (Visible on Mobile) -->
 <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
@@ -143,67 +120,29 @@ $result = $pdo->query($sql);
     </div>
 
     <!-- Main Content -->
-    <div class="ml-0 md:ml-64 p-6">
-        <h2 class="text-4xl font-bold text-center mb-8 text-blue-950">Orders</h2>
-        
-        <!-- Add Order Form -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h3 class="text-2xl font-bold mb-4">Add New Order</h3>
-            <form action="orders.php" method="POST" class="space-y-4">
-                <div>
-                    <label class="block text-gray-700 font-medium mb-1">Supplier</label>
-                    <select name="supplier_id" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                        <?php foreach ($suppliers as $supplier): ?>
-                            <option value="<?= htmlspecialchars($supplier['id']) ?>"><?= htmlspecialchars($supplier['name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-medium mb-1">Order Date</label>
-                    <input type="date" name="order_date" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-medium mb-1">Total Amount</label>
-                    <input type="number" step="0.01" name="total_amount" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-medium mb-1">Status</label>
-                    <select name="status" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                        <option value="pending">Pending</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="received">Received</option>
-                        <option value="canceled">Canceled</option>
-                    </select>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 transition">Add Order</button>
-            </form>
-        </div>
-
-        <!-- Orders List -->
-        <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-            <table class="w-full border-collapse">
+    <div class="ml-64 p-12 mb-32 mt-16 w-full flex justify-center items-center">
+        <div class="bg-white p-8 rounded-lg shadow-md shadow-gray-500 w-full max-w-5xl">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Users List</h2>
+            <table class="min-w-full bg-white">
                 <thead>
-                    <tr class="bg-blue-700 text-white">
-                        <th class="p-2 border">Supplier</th>
-                        <th class="p-2 border">Order Date</th>
-                        <th class="p-2 border">Status</th>
-                        <th class="p-2 border">Total Price</th>
-                        <th class="p-2 border">Action</th>
+                    <tr>
+                        <th class="py-2 px-4 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">ID</th>
+                        <th class="py-2 px-4 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">Name</th>
+                        <th class="py-2 px-4 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">Email</th>
+                        <th class="py-2 px-4 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">Role</th>
+                        <th class="py-2 px-4 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">Created At</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)): ?>
-                    <tr class="hover:bg-gray-100">
-                        <td class="p-2 border"><?= htmlspecialchars($row['supplier']) ?></td>
-                        <td class="p-2 border"><?= htmlspecialchars($row['order_date']) ?></td>
-                        <td class="p-2 border"><?= htmlspecialchars($row['status']) ?></td>
-                        <td class="p-2 border">$<?= htmlspecialchars($row['total_amount']) ?></td>
-                        <td class="p-2 border text-center">
-                            <a href="view_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-blue-600 hover:underline">View</a>
-                            <a href="edit_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-blue-600 hover:underline ml-2">Edit</a>
-                        </td>
+                    <?php foreach ($users as $user): ?>
+                    <tr>
+                        <td class="py-2 px-4 border-b border-gray-300"><?= htmlspecialchars($user['user_id']) ?></td>
+                        <td class="py-2 px-4 border-b border-gray-300"><?= htmlspecialchars($user['name']) ?></td>
+                        <td class="py-2 px-4 border-b border-gray-300"><?= htmlspecialchars($user['email']) ?></td>
+                        <td class="py-2 px-4 border-b border-gray-300"><?= htmlspecialchars($user['role']) ?></td>
+                        <td class="py-2 px-4 border-b border-gray-300"><?= htmlspecialchars($user['created_at']) ?></td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -263,37 +202,6 @@ $result = $pdo->query($sql);
             document.querySelectorAll('.focus:ring-blue-600').forEach(element => {
                 element.classList.toggle('dark:focus:ring-blue-600');
             });
-        });
-
-        // Logout Modal
-        const logoutBtn = document.getElementById("logoutBtn");
-        const logoutModal = document.getElementById("logoutModal");
-        const keepPassword = document.getElementById("keepPassword");
-        const removePassword = document.getElementById("removePassword");
-        const cancelLogout = document.getElementById("cancelLogout");
-
-        logoutBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            logoutModal.classList.remove("hidden");
-        });
-
-        keepPassword.addEventListener("click", () => {
-            sessionStorage.removeItem("user");
-            logoutModal.classList.add("hidden");
-            alert("You have logged out, but your password is kept!");
-            location.reload();
-        });
-
-        removePassword.addEventListener("click", () => {
-            localStorage.removeItem("password");
-            sessionStorage.removeItem("user");
-            logoutModal.classList.add("hidden");
-            alert("You have logged out without keeping the password!");
-            location.reload();
-        });
-
-        cancelLogout.addEventListener("click", () => {
-            logoutModal.classList.add("hidden");
         });
     </script>
 </body>

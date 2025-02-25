@@ -1,37 +1,53 @@
 <?php
+session_start();
+require 'config.php';
 
-// معالجة البيانات عند إرسال النموذج
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // استلام البيانات من النموذج
-    $equipment_name = $_POST['equipment_name'];
-    $maintenance_date = $_POST['maintenance_date'];
-    $status = $_POST['status'];
-
-    // هنا يمكنك إضافة كود لحفظ البيانات في قاعدة البيانات (إذا كنت تستخدم قاعدة بيانات)
-    echo "تم تسجيل المعدات للصيانة بنجاح!";
+// Check if the user is logged in
+if (!isset($_SESSION['Email'])) {
+    header("Location: ./StageFolder/signin.php");
+    exit();
 }
 
-// هذا مجرد مثال لبيانات المعدات في حالة لم تستخدم قاعدة بيانات
-$equipment = [
-    ['name' => 'Laptop', 'status' => 'Needs Repair'],
-    ['name' => 'Printer', 'status' => 'In Good Condition'],
-    ['name' => 'Router', 'status' => 'Needs Repair'],
-];
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $equipment_id = $_POST['equipment_id'];
+    $technician_id = $_POST['technician_id'];
+    $issue_description = $_POST['issue_description'];
+    $status = $_POST['status'];
+
+    // Insert the maintenance record into the database
+    $stmt = $pdo->prepare("INSERT INTO maintenance (equipment_id, technician_id, issue_description, status) VALUES (:equipment_id, :technician_id, :issue_description, :status)");
+    $stmt->bindParam(':equipment_id', $equipment_id);
+    $stmt->bindParam(':technician_id', $technician_id);
+    $stmt->bindParam(':issue_description', $issue_description);
+    $stmt->bindParam(':status', $status);
+    $stmt->execute();
+
+    echo "Maintenance record added successfully!";
+}
+
+// Fetch equipment data from the database
+$stmt = $pdo->prepare("SELECT id, name FROM equipment");
+$stmt->execute();
+$equipment = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch technician data from the database
+$stmt = $pdo->prepare("SELECT user_id, name FROM users WHERE role = 'technician'");
+$stmt->execute();
+$technicians = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch maintenance records from the database
+$stmt = $pdo->prepare("SELECT m.id, e.name AS equipment_name, m.status, m.issue_description FROM maintenance m JOIN equipment e ON m.equipment_id = e.id");
+$stmt->execute();
+$maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Equipment</title>
+    <title>Maintenance Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/e3915d69f3.js" crossorigin="anonymous"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -39,54 +55,53 @@ $equipment = [
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex justify-center items-center">
 
+    <!-- Sidebar Toggle Button (Visible on Mobile) -->
+<button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
+    <i class="fas fa-bars"></i>
+</button>
 
-    <!-- Sidebar -->
-    <div class="md:flex hidden w-64 bg-blue-900 rounded-r-md text-white p-6 fixed top-0 left-0 h-full shadow-lg">
-        <div class="space-y-6 w-full">
-        <div class="logo w-full border-b-2 -mt-6 mx-auto">
+<!-- Sidebar -->
+<div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
+
+    <div class="space-y-6 w-full">
+        <!-- Logo -->
+        <div class="logo w-full border-b-2 -mt-10 mx-auto sticky -top-6 bg-blue-900 z-10 ">
             <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
         </div>
-            <div class="flex justify-between items-center">
-                <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
-                <button class="relative text-xl" aria-label="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
-                </button>
-            </div>
 
-            <div class="UserInfo flex items-center w-full space-x-3 mt-4 border-2 border-white p-4 rounded-2xl relative">
-                <span class="cursor-pointer" id="userDropdownButton"><i class="fa-solid fa-caret-down"></i></span>
-                <img src="assets/profile.jpg" alt="User Avatar" class="w-12 h-12 rounded-full cursor-pointer" id="userDropdownButton">
-                <div class="UserDetails cursor-pointer">
-                    <span class="w-full text-sm font-bold">Younes Ouba</span>
-                    <p class="UserText">IT Department</p>
-                </div>
-                <div class="absolute top-16 left-0 bg-white text-gray-800 p-4 rounded-lg shadow-lg hidden" id="userDropdownMenu">
-                    <a href="settings.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-cogs"></i> Settings</a>
-                    <a href="logout.html" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-            </div>
+        <!-- Search Bar and Notifications -->
+        <div class="flex justify-between items-center">
+            <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
+            <button class="relative text-xl" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="absolute top-0 -mt-2 -mr-1 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
+            </button>
+        </div>
 
-
-
-            <div class="space-y-4 mt-6">
-                <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-cogs"></i>
-                    <span>Equipment</span>
-                </a>
-                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Assign</span>
-                </a>
-                <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-wrench"></i>
-                    <span>Maintenance</span>
-                </a>
-                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+        <!-- Navigation Links -->
+        <div class="space-y-4 mt-6">
+            <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-cogs"></i>
+                <span>Equipment</span>
+            </a>
+            <a href="addUser.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-user-plus"></i>
+                <span>Users</span>
+            </a>
+            
+            <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Assign</span>
+            </a>
+            <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-wrench"></i>
+                <span>Maintenance</span>
+            </a>
+            <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
                 <i class="fas fa-users"></i>
                 <span>Suppliers</span>
             </a>
@@ -100,20 +115,38 @@ $equipment = [
                 </a>
         </div>
 
-            <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-cogs"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="logout.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </div>
+        <!-- Settings and Logout -->
+        <div class="mt-8 space-y-4">
+            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-cogs"></i>
+                <span>Settings</span>
+            </a>
+
+
+<!-- Logout button -->
+<a href="#" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Logout</span>
+</a>
+
+<!-- Confirmation Modal -->
+<div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
+    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
+        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
+        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
+        
+        <div class="flex justify-center gap-2 mt-2">
+            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
+            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
+            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
         </div>
     </div>
+</div>
+        </div>
+    </div>
+</div>
 
-    <!-- Dark Mode Button -->
+    <!-- Dark Mode -->
     <div class="p-6 fixed top-4 mt-6 right-4 z-50">
         <button id="darkModeToggle" class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-600 transition-colors duration-300">
             <i id="darkModeIcon" class="fas fa-moon"></i>
@@ -121,96 +154,109 @@ $equipment = [
     </div>
 
     <!-- Main Content -->
-    <div class="p-8 rounded-lg shadow-md shadow-gray-500 ml-64 mx-auto mt-10 w-full">
-    <div class="text-center mb-6">
-        <h2 class="text-3xl font-bold text-gray-700">Maintenance Management</h2>
-    </div>
-
-    <!-- Form: Add New Maintenance -->
-    <form action="maintenance.php" method="POST" class="space-y-5 w-2xl mx-auto">
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Equipment Name</label>
-            <input type="text" name="equipment_name" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+    <div class="p-8 rounded-lg shadow-md shadow-gray-500 mx-auto mt-10 w-full">
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-700">Maintenance Management</h2>
         </div>
 
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Maintenance Date</label>
-            <input type="date" name="maintenance_date" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-        </div>
+        <!-- Form: Add New Maintenance -->
+        <form action="maintenance.php" method="POST" class="space-y-5 w-2xl mx-auto">
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Equipment</label>
+                <select name="equipment_id" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    <?php foreach ($equipment as $item): ?>
+                        <option value="<?= htmlspecialchars($item['id']) ?>"><?= htmlspecialchars($item['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Status</label>
-            <select name="status" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                <option value="Needs Repair">Needs Repair</option>
-                <option value="In Good Condition">In Good Condition</option>
-                <option value="Repaired">Repaired</option>
-            </select>
-        </div>
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Technician</label>
+                <select name="technician_id" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    <?php foreach ($technicians as $technician): ?>
+                        <option value="<?= htmlspecialchars($technician['user_id']) ?>"><?= htmlspecialchars($technician['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 transition">
-            Register Maintenance
-        </button>
-    </form>
-    <!-- Add this inside the maintenance.php file, below the form -->
-<div class="mt-8">
-    <h3 class="text-2xl font-bold text-gray-800 mb-4">Maintenance Progress</h3>
-    <div class="space-y-4">
-        <div>
-            <p class="text-sm mb-2">Laptop Repair: 60%</p>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 60%;"></div>
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Issue Description</label>
+                <textarea name="issue_description" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required></textarea>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-medium mb-1">Status</label>
+                <select name="status" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                Register Maintenance
+            </button>
+        </form>
+
+        <!-- Maintenance Progress -->
+        <div class="mt-8">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Maintenance Progress</h3>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm mb-2">Laptop Repair: 60%</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 60%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-sm mb-2">Printer Maintenance: 80%</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-green-600 h-2.5 rounded-full" style="width: 80%;"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div>
-            <p class="text-sm mb-2">Printer Maintenance: 80%</p>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div class="bg-green-600 h-2.5 rounded-full" style="width: 80%;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-    <!-- Equipment List -->
-    <h3 class="text-2xl font-bold text-gray-800 mt-10 mb-4">Equipment Needing Maintenance</h3>
-    <div class="overflow-x-auto">
-        <table class="w-full border border-gray-300 rounded-lg shadow-sm text-left">
-            <thead class="text-gray-700">
-                <tr>
-                    <th class="px-5 py-3 border">Equipment</th>
-                    <th class="px-5 py-3 border">Status</th>
-                    <th class="px-5 py-3 border">Action</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                <?php foreach ($equipment as $item): ?>
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-5 py-3 border"><?= htmlspecialchars($item['name']) ?></td>
-                        <td class="px-5 py-3 border"><?= htmlspecialchars($item['status']) ?></td>
-                        <td class="px-5 py-3 border">
-                            <?php if ($item['status'] == 'Needs Repair'): ?>
-                                <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Repair</button>
-                            <?php elseif ($item['status'] == 'In Good Condition'): ?>
-                                <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Good</button>
-                            <?php else: ?>
-                                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Repaired</button>
-                            <?php endif; ?>
-                        </td>
+
+        <!-- Equipment List -->
+        <h3 class="text-2xl font-bold text-gray-800 mt-10 mb-4">Equipment Needing Maintenance</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full border border-gray-300 rounded-lg shadow-sm text-left">
+                <thead class="text-gray-700">
+                    <tr>
+                        <th class="px-5 py-3 border">Equipment</th>
+                        <th class="px-5 py-3 border">Status</th>
+                        <th class="px-5 py-3 border">Action</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <?php foreach ($maintenance_records as $record): ?>
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-5 py-3 border"><?= htmlspecialchars($record['equipment_name']) ?></td>
+                            <td class="px-5 py-3 border"><?= htmlspecialchars($record['status']) ?></td>
+                            <td class="px-5 py-3 border">
+                                <?php if ($record['status'] == 'pending'): ?>
+                                    <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Pending</button>
+                                <?php elseif ($record['status'] == 'in_progress'): ?>
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">In Progress</button>
+                                <?php else: ?>
+                                    <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Completed</button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
-
 
     <script>
-        // toggle menu
+        // Toggle user dropdown menu
         document.getElementById('userDropdownButton').addEventListener('click', function() {
             document.getElementById('userDropdownMenu').classList.toggle('hidden');
         });
 
         // Dark Mode Toggle
-        let toggledarkmode = document.getElementById('darkModeToggle').addEventListener('click', function() {
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
             document.body.classList.toggle('bg-gray-800');
             document.body.classList.toggle('text-gray-200');
             document.body.classList.toggle('bg-gray-50');
@@ -234,8 +280,8 @@ $equipment = [
                 element.classList.toggle('dark:shadow-white');
             });
             document.querySelectorAll('.text-blue-950').forEach(element => {
-                element.classList.toggle('dark:text-blue-50')
-            })
+                element.classList.toggle('dark:text-blue-50');
+            });
 
             document.querySelectorAll('.text-gray-700').forEach(element => {
                 element.classList.toggle('dark:text-gray-300');
@@ -243,7 +289,7 @@ $equipment = [
             document.querySelectorAll('.border').forEach(element => {
                 element.classList.toggle('dark:border-gray-600');
             });
-            
+
             document.querySelectorAll('input, select, textarea').forEach(element => {
                 element.classList.toggle('bg-gray-900');
                 element.classList.toggle('text-white');

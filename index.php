@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'config.php';
 
 $sql = "SELECT * FROM equipment"; 
@@ -15,6 +16,17 @@ $sql2 = "SELECT * FROM equipment WHERE status = 'Maintenance'";
 $stmt2 = $pdo->prepare($sql2);
 $stmt2->execute();
 $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+if (!isset($_SESSION['Email'])) {
+    header("Location: ./StageFolder/signin.php");
+    exit();
+} else {
+    $Email = $_SESSION['Email'];
+    $fullName = $pdo->prepare("SELECT Full_Name, Email FROM `informations` WHERE Email = :Email");
+    $fullName->bindParam(':Email', $Email);
+    $fullName->execute();
+    $Name = $fullName->fetch(PDO::FETCH_ASSOC);
+}
 ?>
 
 
@@ -60,7 +72,9 @@ $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
             <span class="cursor-pointer" id="userDropdownButton"><i class="fa-solid fa-caret-down"></i></span>
             <img src="assets/profile.jpg" alt="User Avatar" class="w-12 h-12 rounded-full cursor-pointer" id="userDropdownButton">
             <div class="UserDetails cursor-pointer">
-                <span class="w-full text-sm font-bold">Younes Ouba</span>
+                <span class="w-full text-sm font-bold">
+                    <?php echo htmlspecialchars($Name['Full_Name']); ?>               
+                </span>
                 <p class="UserText">IT Department</p>
             </div>
             <div class="absolute top-16 left-0 bg-white text-gray-800 p-4 rounded-lg shadow-lg hidden" id="userDropdownMenu">
@@ -79,6 +93,11 @@ $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
                 <i class="fas fa-cogs"></i>
                 <span>Equipment</span>
             </a>
+            <a href="addUser.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <i class="fas fa-user-plus"></i>
+                <span>Users</span>
+            </a>
+            
             <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-clipboard-list"></i>
                 <span>Assign</span>
@@ -110,24 +129,17 @@ $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
 
 <!-- Logout button -->
-<a href="#" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+<a href="logout.php" onclick="return confirmLogout();" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
     <i class="fas fa-sign-out-alt"></i>
     <span>Logout</span>
 </a>
 
-<!-- Confirmation Modal -->
-<div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
-    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
-        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
-        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
-        
-        <div class="flex justify-center gap-2 mt-2">
-            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
-            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
-            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
-        </div>
-    </div>
-</div>
+<script>
+function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}
+</script>
+
 
 <script>
     // Page elements
@@ -176,7 +188,7 @@ $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
     <!-- Dark Mode -->
-    <div class="p-6 fixed top-4 mt-6 right-4 z-50">
+    <div class="p-6 fixed top-4 right-4 z-50">
         <button id="darkModeToggle" class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center hover:bg-gray-600 transition-colors duration-300">
             <i id="darkModeIcon" class="fas fa-moon"></i>
         </button>

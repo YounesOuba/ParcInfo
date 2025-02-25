@@ -1,20 +1,9 @@
 <?php
-/*
-// 1. الاتصال بقاعدة البيانات
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// التحقق من الاتصال
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-*/
 include 'db.php';
 
-// 2. جلب بيانات الطلب (أو إظهار خطأ إذا ما كانش id)
 if (isset($_GET['id'])) {
     $order_id = $_GET['id'];
 
-    // جلب البيانات ديال الطلب
     $sql = "SELECT * FROM orders WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $order_id);
