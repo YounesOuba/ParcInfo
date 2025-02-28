@@ -8,8 +8,15 @@ if (!isset($_SESSION['Email'])) {
     exit();
 }
 
+// Fetch user role from the database
+$email = $_SESSION['Email'];
+$stmt = $pdo->prepare("SELECT role FROM users WHERE email = :email");
+$stmt->bindParam(':email', $email);
+$stmt->execute();
+$user_role = $stmt->fetchColumn();
+
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $user_role == 'technician') {
     $equipment_id = $_POST['equipment_id'];
     $technician_id = $_POST['technician_id'];
     $issue_description = $_POST['issue_description'];
@@ -27,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Fetch equipment data from the database
-$stmt = $pdo->prepare("SELECT id, name FROM equipment");
+$stmt = $pdo->prepare("SELECT id, name, serial_number FROM equipment");
 $stmt->execute();
 $equipment = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -56,95 +63,93 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body class="bg-gray-50 text-gray-800 min-h-screen flex justify-center items-center">
 
     <!-- Sidebar Toggle Button (Visible on Mobile) -->
-<button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
-    <i class="fas fa-bars"></i>
-</button>
+    <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
+        <i class="fas fa-bars"></i>
+    </button>
 
-<!-- Sidebar -->
-<div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
+    <!-- Sidebar -->
+    <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
+        <div class="space-y-6 w-full">
+            <!-- Logo -->
+            <div class="logo w-full border-b-2 -mt-10 mx-auto sticky -top-6 bg-blue-900 z-10 ">
+                <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
+            </div>
 
-    <div class="space-y-6 w-full">
-        <!-- Logo -->
-        <div class="logo w-full border-b-2 -mt-10 mx-auto sticky -top-6 bg-blue-900 z-10 ">
-            <img src="assets/logo.png" alt="" class="w-48 -mb-4 mx-auto">
-        </div>
+            <!-- Search Bar and Notifications -->
+            <div class="flex justify-between items-center">
+                <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
+                <button class="relative text-xl" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute top-0 -mt-2 -mr-1 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
+                </button>
+            </div>
 
-        <!-- Search Bar and Notifications -->
-        <div class="flex justify-between items-center">
-            <input type="text" placeholder="Search..." class="w-3/4 p-2 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Search">
-            <button class="relative text-xl" aria-label="Notifications">
-                <i class="fas fa-bell"></i>
-                <span class="absolute top-0 -mt-2 -mr-1 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
-            </button>
-        </div>
-
-        <!-- Navigation Links -->
-        <div class="space-y-4 mt-6">
-            <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-cogs"></i>
-                <span>Equipment</span>
-            </a>
-            <a href="addUser.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-user-plus"></i>
-                <span>Users</span>
-            </a>
-            
-            <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-clipboard-list"></i>
-                <span>Assign</span>
-            </a>
-            <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-wrench"></i>
-                <span>Maintenance</span>
-            </a>
-            <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
-                <i class="fas fa-users"></i>
-                <span>Suppliers</span>
-            </a>
-                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Orders</span>
+            <!-- Navigation Links -->
+            <div class="space-y-4 mt-6">
+                <a href="index.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
                 </a>
-                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                <a href="equipment.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    <i class="fas fa-cogs"></i>
+                    <span>Equipment</span>
+                </a>
+                <a href="addUser.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Users</span>
+                </a>
+                
+                <a href="assign.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-clipboard-list"></i>
-                    <span>Logs</span>
+                    <span>Assign</span>
                 </a>
-        </div>
+                <a href="maintenance.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    <i class="fas fa-wrench"></i>
+                    <span>Maintenance</span>
+                </a>
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-users"></i>
+                    <span>Suppliers</span>
+                </a>
+                    <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Logs</span>
+                    </a>
+            </div>
 
-        <!-- Settings and Logout -->
-        <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-                <i class="fas fa-cogs"></i>
-                <span>Settings</span>
-            </a>
+            <!-- Settings and Logout -->
+            <div class="mt-8 space-y-4">
+                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    <i class="fas fa-cogs"></i>
+                    <span>Settings</span>
+                </a>
 
+                <!-- Logout button -->
+                <a href="#" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
 
-<!-- Logout button -->
-<a href="#" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
-    <i class="fas fa-sign-out-alt"></i>
-    <span>Logout</span>
-</a>
-
-<!-- Confirmation Modal -->
-<div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
-    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
-        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
-        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
-        
-        <div class="flex justify-center gap-2 mt-2">
-            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
-            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
-            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
+                <!-- Confirmation Modal -->
+                <div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
+                    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
+                        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
+                        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
+                        
+                        <div class="flex justify-center gap-2 mt-2">
+                            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
+                            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
+                            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-        </div>
-    </div>
-</div>
 
     <!-- Dark Mode -->
     <div class="p-6 fixed top-4 mt-6 right-4 z-50">
@@ -154,19 +159,19 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Main Content -->
-    <div class="p-8 rounded-lg shadow-md shadow-gray-500 mx-auto ml-32
-     mt-10 w-full">
+    <div class="p-8 rounded-lg shadow-md shadow-gray-500 mx-auto ml-60 w-full">
         <div class="text-center mb-6">
             <h2 class="text-3xl font-bold text-gray-700">Maintenance Management</h2>
         </div>
 
         <!-- Form: Add New Maintenance -->
+        <?php if ($user_role == 'technician'): ?>
         <form action="maintenance.php" method="POST" class="space-y-5 w-3xl mx-auto">
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Equipment</label>
                 <select name="equipment_id" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
                     <?php foreach ($equipment as $item): ?>
-                        <option value="<?= htmlspecialchars($item['id']) ?>"><?= htmlspecialchars($item['name']) ?></option>
+                        <option value="<?= htmlspecialchars($item['id']) ?>"><?= htmlspecialchars($item['name']) ?> (<?= htmlspecialchars($item['serial_number']) ?>) </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -198,25 +203,7 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 Register Maintenance
             </button>
         </form>
-
-        <!-- Maintenance Progress
-        <div class="mt-8">
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">Maintenance Progress</h3>
-            <div class="space-y-4">
-                <div>
-                    <p class="text-sm mb-2">Laptop Repair: 60%</p>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 60%;"></div>
-                    </div>
-                </div>
-                <div>
-                    <p class="text-sm mb-2">Printer Maintenance: 80%</p>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="bg-green-600 h-2.5 rounded-full" style="width: 80%;"></div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
+        <?php endif; ?>
 
         <!-- Equipment List -->
         <h3 class="text-2xl font-bold text-gray-800 mt-10 mb-4">Equipment Needing Maintenance</h3>
@@ -225,24 +212,26 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <thead class="text-gray-700">
                     <tr>
                         <th class="px-5 py-3 border">Equipment</th>
+                        <th class="px-5 py-3 border">Issue Description</th>
                         <th class="px-5 py-3 border">Status</th>
+                        <?php if ($user_role == 'technician'): ?>
                         <th class="px-5 py-3 border">Action</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     <?php foreach ($maintenance_records as $record): ?>
                         <tr class="hover:bg-gray-50">
                             <td class="px-5 py-3 border"><?= htmlspecialchars($record['equipment_name']) ?></td>
+                            <td class="px-5 py-3 border"><?= htmlspecialchars($record['issue_description']) ?></td>
                             <td class="px-5 py-3 border"><?= htmlspecialchars($record['status']) ?></td>
+
+                            <?php if ($user_role !== 'user'): ?>
                             <td class="px-5 py-3 border">
-                                <?php if ($record['status'] == 'pending'): ?>
-                                    <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Pending</button>
-                                <?php elseif ($record['status'] == 'in_progress'): ?>
-                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">In Progress</button>
-                                <?php else: ?>
-                                    <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Completed</button>
-                                <?php endif; ?>
+                                <a href="editMaintenance.php?id=<?= htmlspecialchars($record['id']) ?>" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Update</a>
+                                <a href="deleteMaintenance.php?id=<?= htmlspecialchars($record['id']) ?>" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
                             </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

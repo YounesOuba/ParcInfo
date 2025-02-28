@@ -13,6 +13,7 @@ if (isset($_GET['id'])) {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Update equipment data
         $name = $_POST['name'];
+        $serial_number = $_POST['serial_number'];
         $category = $_POST['category'];
         $brand = $_POST['brand'];
         $model = $_POST['model'];
@@ -46,11 +47,12 @@ if (isset($_GET['id'])) {
             $image_destination = $equipment['equipment_image']; // Keep the old image if no new image is uploaded
         }
 
-        $updateQuery = "UPDATE equipment SET name = :name, category = :category, brand = :brand, model = :model, status = :status, equipment_image = :equipment_image WHERE id = :id";
+        $updateQuery = "UPDATE equipment SET name = :name, serial_number = :serial_number, category = :category, brand = :brand, model = :model, status = :status, equipment_image = :equipment_image WHERE id = :id";
         $updateStmt = $pdo->prepare($updateQuery);
         $updateStmt->execute([
             'id' => $equipmentId,
             'name' => $name,
+            'serial_number' => $serial_number,
             'category' => $category,
             'brand' => $brand,
             'model' => $model,
@@ -186,6 +188,10 @@ if (isset($_GET['id'])) {
                     <input type="text" id="name" name="name" value="<?= htmlspecialchars($equipment['name']) ?>" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
                 </div>
                 <div>
+                    <label for="serial_number" class="block text-gray-700 font-semibold">Serial Number:</label>
+                    <input type="text" id="serial_number" name="serial_number" value="<?= htmlspecialchars($equipment['serial_number']) ?>" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
+                </div>
+                <div>
                     <label for="category" class="block text-gray-700 font-semibold">Category:</label>
                     <select id="category" name="category" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
                         <option value="" disabled>Select Category</option>
@@ -209,7 +215,6 @@ if (isset($_GET['id'])) {
                         <option value="" disabled>Select Status</option>
                         <option value="Available" <?= $equipment['status'] == 'Available' ? 'selected' : '' ?>>Available</option>
                         <option value="Assigned" <?= $equipment['status'] == 'Assigned' ? 'selected' : '' ?>>Assigned</option>
-                        <option value="Maintenance" <?= $equipment['status'] == 'Maintenance' ? 'selected' : '' ?>>Maintenance</option>
                         <option value="Retired" <?= $equipment['status'] == 'Retired' ? 'selected' : '' ?>>Retired</option>
                     </select>
                 </div>

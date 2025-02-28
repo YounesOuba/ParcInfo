@@ -24,7 +24,6 @@ $stmt = $pdo->prepare($query);
 $stmt->execute();
 $equipmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
 if (!isset($_SESSION['Email'])) {
     header("Location: ./StageFolder/signin.php");
     exit();
@@ -45,8 +44,63 @@ if (!isset($_SESSION['Email'])) {
     <title>View Equipment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/e3915d69f3.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .zoom-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+            cursor: pointer;
+        }
+        .image-container:hover .zoom-icon {
+            opacity: 1;
+        }
+        .image-popup {
+            display: none;
+            position: fixed;
+            width: 75%;
+            height: auto;
+            background-color: rgba(14, 14, 14, 0.8);
+            z-index: 1000;
+            top: 50%;
+            left: 50%;
+            margin-left: 150px;
+            transform: translate(-50%, -50%);
+        }
+        .image-popup img {
+            display: block;
+            margin: 50px auto;
+            width: 50%;
+            height: auto;
+            object-fit: cover;
+        }
+        .image-popup .closeBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: none;
+            color: red;
+            margin-top: 10px;
+            padding: 8px 20px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .image-popup .closeBtn:hover {
+            color: pink;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen">
    <!-- Sidebar Toggle Button (Visible on Mobile) -->
@@ -118,66 +172,10 @@ if (!isset($_SESSION['Email'])) {
 
 
 <!-- Logout button -->
-<a href="#" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+<a href="logout.php" id="logoutBtn" class="flex mb-4 items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
     <i class="fas fa-sign-out-alt"></i>
     <span>Logout</span>
 </a>
-
-<!-- Confirmation Modal -->
-<div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
-    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
-        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
-        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
-        
-        <div class="flex justify-center gap-2 mt-2">
-            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
-            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
-            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Page elements
-    const logoutBtn = document.getElementById("logoutBtn");
-    const logoutModal = document.getElementById("logoutModal");
-    const keepPassword = document.getElementById("keepPassword");
-    const removePassword = document.getElementById("removePassword");
-    const cancelLogout = document.getElementById("cancelLogout");
-
-    // When clicking the logout button
-    logoutBtn.addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent the page from redirecting
-        logoutModal.classList.remove("hidden"); // Show the modal
-    });
-
-    // Keep the password
-    keepPassword.addEventListener("click", () => {
-        sessionStorage.removeItem("user"); // Only remove the session
-        logoutModal.classList.add("hidden"); // Hide the modal
-        alert("You have logged out, but your password is kept!"); 
-        location.reload(); // Reload the page without redirecting
-    });
-
-    // Remove password and log out
-    removePassword.addEventListener("click", () => {
-        localStorage.removeItem("password"); // Remove password from local storage
-        sessionStorage.removeItem("user"); // Remove session data
-        logoutModal.classList.add("hidden"); // Hide the modal
-        alert("You have logged out without keeping the password!");
-        location.reload(); // Reload the page without redirecting
-    });
-
-    // Cancel logout action
-    cancelLogout.addEventListener("click", () => {
-        logoutModal.classList.add("hidden"); // Hide the modal
-    });
-</script>
-
-
-
-
-
 
         </div>
     </div>
@@ -192,7 +190,7 @@ if (!isset($_SESSION['Email'])) {
 
 
     <!-- Main Content -->
-    <div class="p-6 mb-20 mt-8 ml-32 w-full mx-auto">
+    <div class="p-6 mb-20 mt-8 ml-64 w-full mx-auto">
         <div class="w-full text-center">
             <h2 class="text-3xl font-bold text-gray-700 mb-10 mx-auto">Equipment List</h2>
         </div>
@@ -225,16 +223,30 @@ if (!isset($_SESSION['Email'])) {
                     echo "<td class='px-6 py-4'>{$equipment['category']}</td>";
                     echo "<td class='px-6 py-4'>{$equipment['brand']}</td>";
                     echo "<td class='px-6 py-4'>{$equipment['model']}</td>";
-                    echo "<td class='px-6 py-4'><img src='{$equipment['equipment_image']}' alt='{$equipment['name']}' class='w-16 h-16 object-cover rounded-lg'></td>";
+                    echo "<td class='px-6 py-4'>
+                            <div class='image-container'>
+                                <img src='{$equipment['equipment_image']}' alt='{$equipment['name']}' class='equipment-image w-16 h-16 object-cover rounded-lg cursor-pointer'>
+                                <span class='zoom-icon text-white text-2xl mx-auto'> <i class='fa-solid fa-expand'></i> </span>
+
+
+                            <!-- // popup img after clicking -->
+                            <div class='image-popup'>
+                                <img src='{$equipment['equipment_image']}' alt='{$equipment['name']}' class='equipment-image'>
+                                <button class='closeBtn'> &times; </button>
+                            </div>
+                            </div>
+                          </td>";
                     echo "<td class='px-6 py-4'>{$equipment['status']}</td>";
                     echo "<td class='px-6 py-4'>" . (!empty($equipment['assigned_user']) ? $equipment['assigned_user'] : 'Not Assigned') . "</td>";
-                    echo "<td class='px-6 py-4 grid text-center mx-auto'>
+                    echo "<td class=' px-6 py-4 grid text-center mx-auto'>
                             <a href='editEquipment.php?id={$equipment['id']}' class='text-blue-500 hover:underline mr-4'><i class='fas fa-edit'></i> Edit</a>
                             <a href='deleteEquipment.php?id={$equipment['id']}' class='text-red-500 hover:underline'><i class='fas fa-trash'></i> Delete</a>
                         </td>";
                     echo "</tr>";
                 }
                 ?>
+
+                                
             </tbody>
         </table>
         <!-- Add New Equipment Button -->
@@ -255,11 +267,6 @@ if (!isset($_SESSION['Email'])) {
                 row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
         });
- 
-        // Toggle menu
-        document.getElementById('userDropdownButton').addEventListener('click', function() {
-            document.getElementById('userDropdownMenu').classList.toggle('hidden');
-        });
 
         // Dark Mode Toggle
         const darkModeButton = document.getElementById('darkModeToggle');
@@ -269,6 +276,31 @@ if (!isset($_SESSION['Email'])) {
             darkModeIcon.classList.toggle('fa-moon');
             darkModeIcon.classList.toggle('fa-sun');
         });
+
+        // popup img after clicking
+        document.querySelectorAll('.image-container').forEach(container => {
+            const img = container.querySelector('.equipment-image');
+            const zoomIcon = container.querySelector('.zoom-icon');
+            const popupImg = container.querySelector('.image-popup');
+            const closeBtn = container.querySelector('.closeBtn');
+
+
+            zoomIcon.addEventListener('click', () => {
+                console.log('Image clicked');
+                popupImg.style.display = 'block';
+            });
+            img.addEventListener('click', () => {
+                popupImg.style.display = 'block';
+            });
+
+            // Close popup when close button is clicked
+            closeBtn.addEventListener('click', () => {
+                popupImg.style.display = 'none';
+            });
+        });
+
+        console.log('Script loaded');
+
     </script>
 
 </body>

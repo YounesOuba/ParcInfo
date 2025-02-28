@@ -1,5 +1,13 @@
 <?php
+session_start();
 require 'config.php';
+
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // Redirect to a different page or show an error message
+    echo("You do not have permission to add users.");
+    exit();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
@@ -7,14 +15,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
     $role = $_POST["role"];
 
-    $sql = "INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':password', $password);
-    $stmt->bindParam(':role', $role);
+    $sql1 = "INSERT INTO users (name, email, password, role) VALUES (:name, :email, :password, :role)";
+    $stmt1 = $pdo->prepare($sql1);
+    $stmt1->bindParam(':name', $name);
+    $stmt1->bindParam(':email', $email);
+    $stmt1->bindParam(':password', $password);
+    $stmt1->bindParam(':role', $role);
 
-    if ($stmt->execute()) {
+    $sql2 = "INSERT INTO informations (Full_Name, Email, Password, role) VALUES (:name, :email, :password, :role)";
+    $stmt2 = $pdo->prepare($sql2);
+    $stmt2->bindParam(':name', $name);
+    $stmt2->bindParam(':email', $email);
+    $stmt2->bindParam(':password', $password);
+    $stmt2->bindParam(':role', $role);
+
+    // Execute both statements
+    if ($stmt1->execute() && $stmt2->execute()) {
         $message = "User added successfully!";
     } else {
         $message = "Error adding user!";
@@ -177,7 +193,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Main Content -->
-    <div class="ml-64 p-12 mb-32 mt-16 w-full flex justify-center items-center">
+    <div class="ml-48 p-12 mb-32 mt-16 w-full flex justify-center items-center">
         <div class="bg-white p-8 rounded-lg shadow-md shadow-gray-500 w-full max-w-3xl">
             <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Add User</h2>
             <?php if (isset($message)) echo "<p class='text-center text-green-600'>$message</p>"; ?>

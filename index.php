@@ -12,7 +12,7 @@ $stmt1 = $pdo->prepare($sql1);
 $stmt1->execute();
 $assignedEquipment = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
-$sql2 = "SELECT * FROM equipment WHERE status = 'Maintenance'";
+$sql2 = "SELECT * FROM maintenance WHERE status IN ('pending', 'in_progress')";
 $stmt2 = $pdo->prepare($sql2);
 $stmt2->execute();
 $maintenanceEquipment = $stmt2->fetchAll(PDO::FETCH_ASSOC);
@@ -27,6 +27,11 @@ if (!isset($_SESSION['Email'])) {
     $fullName->execute();
     $Name = $fullName->fetch(PDO::FETCH_ASSOC);
 }
+
+$role = "SELECT role FROM informations where Email = '$Email'";
+$stmt3 = $pdo->prepare($role);
+$stmt3->execute();
+$role = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -38,6 +43,7 @@ if (!isset($_SESSION['Email'])) {
     <title>Parc Informatique - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/e3915d69f3.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
@@ -75,7 +81,10 @@ if (!isset($_SESSION['Email'])) {
                 <span class="w-full text-sm font-bold">
                     <?php echo htmlspecialchars($Name['Full_Name']); ?>               
                 </span>
-                <p class="UserText">IT Department</p>
+                <p class="UserRole text-sm text-gray-300">
+                    <?php echo htmlspecialchars($role[0]['role']); ?>
+                </p>
+                <p class="UserText text-sm text-gray-300">IT Department</p>
             </div>
             <div class="absolute top-16 left-0 bg-white text-gray-800 p-4 rounded-lg shadow-lg hidden" id="userDropdownMenu">
                 <a href="settings.php" class="block px-4 py-2 hover:bg-gray-200 rounded-xl"><i class="fas fa-cogs"></i> Settings</a>
@@ -133,56 +142,6 @@ if (!isset($_SESSION['Email'])) {
     <i class="fas fa-sign-out-alt"></i>
     <span>Logout</span>
 </a>
-
-<script>
-function confirmLogout() {
-    return confirm("Are you sure you want to log out?");
-}
-</script>
-
-
-<script>
-    // Page elements
-    const logoutBtn = document.getElementById("logoutBtn");
-    const logoutModal = document.getElementById("logoutModal");
-    const keepPassword = document.getElementById("keepPassword");
-    const removePassword = document.getElementById("removePassword");
-    const cancelLogout = document.getElementById("cancelLogout");
-
-    // When clicking the logout button
-    logoutBtn.addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent the page from redirecting
-        logoutModal.classList.remove("hidden"); // Show the modal
-    });
-
-    // Keep the password
-    keepPassword.addEventListener("click", () => {
-        sessionStorage.removeItem("user"); // Only remove the session
-        logoutModal.classList.add("hidden"); // Hide the modal
-        alert("You have logged out, but your password is kept!"); 
-        location.reload(); // Reload the page without redirecting
-    });
-
-    // Remove password and log out
-    removePassword.addEventListener("click", () => {
-        localStorage.removeItem("password"); // Remove password from local storage
-        sessionStorage.removeItem("user"); // Remove session data
-        logoutModal.classList.add("hidden"); // Hide the modal
-        alert("You have logged out without keeping the password!");
-        location.reload(); // Reload the page without redirecting
-    });
-
-    // Cancel logout action
-    cancelLogout.addEventListener("click", () => {
-        logoutModal.classList.add("hidden"); // Hide the modal
-    });
-</script>
-
-
-
-
-
-
         </div>
     </div>
 </div>
