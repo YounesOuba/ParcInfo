@@ -2,12 +2,7 @@
 session_start();
 require 'config.php';
 
-// Check if the user is logged in and is an admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    // Redirect to a different page or show an error message
-    echo("You do not have permission to add users.");
-    exit();
-}
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
@@ -55,6 +50,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
     <i class="fas fa-bars"></i>
 </button>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar"); // تأكدي أن الـ Sidebar عنده هذا الـ ID
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden"); // إضافة أو إزالة كلاس 'hidden'
+    });
+});
+</script>
+
 
 <!-- Sidebar -->
 <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
@@ -113,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Settings and Logout -->
         <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
@@ -239,58 +247,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script>
-        // Toggle Sidebar on Mobile
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
+        // Ensure the DOM is fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle Sidebar on Mobile
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
 
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-        });
-
-        // Close Sidebar When Clicking Outside
-        document.addEventListener('click', (event) => {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggleButton = sidebarToggle.contains(event.target);
-
-            if (!isClickInsideSidebar && !isClickOnToggleButton) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-
-        // Toggle user dropdown menu
-        document.getElementById('userDropdownButton').addEventListener('click', function() {
-            document.getElementById('userDropdownMenu').classList.toggle('hidden');
-        });
-
-        // Dark Mode Toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('bg-gray-800');
-            document.body.classList.toggle('text-gray-200');
-            document.body.classList.toggle('bg-gray-50');
-            document.body.classList.toggle('text-gray-800');
-
-            var icon = document.getElementById('darkModeIcon');
-            if (icon.classList.contains('fa-moon')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
-
-            // Toggle dark mode classes for other elements
-            document.querySelectorAll('.bg-white').forEach(element => {
-                element.classList.toggle('dark:bg-gray-800');
-                element.classList.toggle('dark:text-gray-200');
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
             });
-            document.querySelectorAll('.text-gray-700').forEach(element => {
-                element.classList.toggle('dark:text-gray-300');
+
+            // Close Sidebar When Clicking Outside
+            document.addEventListener('click', (event) => {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggleButton = sidebarToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggleButton) {
+                    sidebar.classList.add('-translate-x-full');
+                }
             });
-            document.querySelectorAll('.border').forEach(element => {
-                element.classList.toggle('dark:border-gray-600');
-            });
-            document.querySelectorAll('.focus:ring-blue-600').forEach(element => {
-                element.classList.toggle('dark:focus:ring-blue-600');
+
+            // Dark Mode Toggle
+            document.getElementById('darkModeToggle').addEventListener('click', function () {
+                document.body.classList.toggle('bg-gray-800');
+                document.body.classList.toggle('text-gray-50');
+
+                // Toggle icon
+                var icon = document.getElementById('darkModeIcon');
+                if (icon.classList.contains('fa-moon')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+
+                document.querySelectorAll('.bg-white').forEach(element => {
+                    element.classList.toggle('dark:bg-gray-800');
+                    element.classList.toggle('dark:text-gray-200');
+                });
+
+                document.querySelectorAll('.shadow-gray-500').forEach(element => {
+                    element.classList.toggle('dark:shadow-white');
+                });
+
+                document.querySelectorAll('.text-blue-950').forEach(element => {
+                    element.classList.toggle('dark:text-blue-50');
+                });
+
+                document.querySelectorAll('.text-gray-700').forEach(element => {
+                    element.classList.toggle('dark:text-gray-300');
+                });
+
+                document.querySelectorAll('.border').forEach(element => {
+                    element.classList.toggle('dark:border-gray-600');
+                });
+
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.classList.toggle('bg-gray-900');
+                    element.classList.toggle('text-white');
+                    element.classList.toggle('border-gray-600');
+                });
             });
         });
     </script>

@@ -1,6 +1,7 @@
 <?php
-
+session_start();
 require 'config.php';
+
 
 // Fetch available equipment
 $equipmentQuery = "SELECT id, name, serial_number FROM equipment WHERE status = 'available'";
@@ -135,6 +136,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <span>Logout</span>
                 </a>
 
+                <!-- Confirmation Modal -->
+                <div id="logoutModal" class="hidden absolute bg-gray-900 bg-opacity-50 flex justify-center items-center p-2 rounded-lg mt-1 left-1/2 transform -translate-x-1/2">
+                    <div class="bg-white p-2 rounded-lg shadow-lg text-center max-w-xs w-full">
+                        <h2 class="text-xs font-semibold  text-black">Do you want to log out?</h2>
+                        <p class="text-gray-600 my-1 text-xs">Do you want to keep your password for faster login?</p>
+                        
+                        <div class="flex justify-center gap-2 mt-2">
+                            <button id="keepPassword" class="bg-green-500 text-white px-2 py-1 rounded-lg text-xs">Keep Password</button>
+                            <button id="removePassword" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs">Don't Keep</button>
+                            <button id="cancelLogout" class="bg-gray-400 text-white px-2 py-1 rounded-lg text-xs">Cancel</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -214,11 +228,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
 
-            // Toggle User Dropdown Menu
-            document.getElementById('userDropdownButton').addEventListener('click', function () {
-                document.getElementById('userDropdownMenu').classList.toggle('hidden');
-            });
-
             // Dark Mode Toggle
             document.getElementById('darkModeToggle').addEventListener('click', function () {
                 document.body.classList.toggle('bg-gray-800');
@@ -243,7 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     element.classList.toggle('dark:shadow-white');
                 });
 
-                document.querySelectorAll('.text-gray-800').forEach(element => {
+                document.querySelectorAll('.text-blue-950').forEach(element => {
                     element.classList.toggle('dark:text-blue-50');
                 });
 
@@ -261,40 +270,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     element.classList.toggle('border-gray-600');
                 });
             });
-
-            // Form Submission Handling
-            const form = document.getElementById('assignForm');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault(); // Prevent default form submission
-
-                // Validate form fields
-                const equipment = form.elements['equipment'].value;
-                const user = form.elements['user'].value;
-                const assignmentDate = form.elements['assignment_date'].value;
-
-                if (!equipment || !user || !assignmentDate) {
-                    alert('Please fill out all fields.');
-                    return;
-                }
-
-                showSpinner();
-
-                // Simulate form submission (replace with actual submission logic)
-                setTimeout(() => {
-                    hideSpinner();
-                    form.submit(); // Submit the form after the spinner is hidden
-                }, 3000); // Simulate a 3-second delay
-            });
-
-            function showSpinner() {
-                loadingSpinner.classList.remove('hidden');
-            }
-
-            function hideSpinner() {
-                loadingSpinner.classList.add('hidden');
-            }
         });
     </script>
 </body>

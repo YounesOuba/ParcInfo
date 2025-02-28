@@ -16,11 +16,7 @@ $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 $user_role = $user['role'];
 
-// Check if the user is a technician
-if ($user_role != 'technician') {
-    echo "You do not have permission to delete maintenance records.";
-    exit();
-}
+
 
 // Check if the maintenance ID is provided
 if (isset($_GET['id'])) {

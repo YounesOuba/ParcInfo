@@ -5,8 +5,19 @@ require 'config.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $supplier_id = $_POST['supplier_id'];
     $order_date = $_POST['order_date'];
-    $total_amount = $_POST['total_amount'];
     $status = $_POST['status'];
+    $equipment_ids = $_POST['equipment_id'];
+    $quantities = $_POST['quantity'];
+    $total_amount = 0;
+
+    // Calculate total amount
+    foreach ($equipment_ids as $index => $equipment_id) {
+        $stmt = $pdo->prepare("SELECT price FROM equipment WHERE id = :equipment_id");
+        $stmt->bindParam(':equipment_id', $equipment_id);
+        $stmt->execute();
+        $price = $stmt->fetchColumn();
+        $total_amount += $price * $quantities[$index];
+    }
 
     // Insert the new order into the database
     $stmt = $pdo->prepare("INSERT INTO orders (supplier_id, order_date, total_amount, status) VALUES (:supplier_id, :order_date, :total_amount, :status)");
@@ -15,6 +26,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':total_amount', $total_amount);
     $stmt->bindParam(':status', $status);
     $stmt->execute();
+    $order_id = $pdo->lastInsertId();
+
+    // Insert order items into the database
+    foreach ($equipment_ids as $index => $equipment_id) {
+        $quantity = $quantities[$index];
+        $stmt = $pdo->prepare("SELECT price, name FROM equipment WHERE id = :equipment_id");
+        $stmt->bindParam(':equipment_id', $equipment_id);
+        $stmt->execute();
+        $equipment = $stmt->fetch(PDO::FETCH_ASSOC);
+        $price = $equipment['price'];
+        $equipment_name = $equipment['name'];
+
+        $stmt = $pdo->prepare("INSERT INTO order_items (order_id, equipment_id, quantity, unit_price, equipment_name) VALUES (:order_id, :equipment_id, :quantity, :unit_price, :equipment_name)");
+        $stmt->bindParam(':order_id', $order_id);
+        $stmt->bindParam(':equipment_id', $equipment_id);
+        $stmt->bindParam(':quantity', $quantity);
+        $stmt->bindParam(':unit_price', $price);
+        $stmt->bindParam(':equipment_name', $equipment_name);
+        $stmt->execute();
+    }
 
     echo "Order added successfully!";
 }
@@ -24,12 +55,24 @@ $stmt = $pdo->prepare("SELECT id, name FROM suppliers");
 $stmt->execute();
 $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch equipment data from the database
+$stmt = $pdo->prepare("SELECT id, name, price FROM equipment");
+$stmt->execute();
+$equipment = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // Fetch orders data from the database
 $sql = "SELECT orders.id, suppliers.name AS supplier, orders.order_date, orders.total_amount, orders.status 
         FROM orders 
         JOIN suppliers ON orders.supplier_id = suppliers.id
         ORDER BY orders.order_date DESC";
 $result = $pdo->query($sql);
+
+// Fetch order items data from the database
+$order_items_sql = "SELECT order_items.order_id, order_items.equipment_name, order_items.quantity, order_items.unit_price 
+                    FROM order_items 
+                    JOIN orders ON order_items.order_id = orders.id";
+$order_items_result = $pdo->query($order_items_sql);
+$order_items = $order_items_result->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -49,9 +92,19 @@ $result = $pdo->query($sql);
     <i class="fas fa-bars"></i>
 </button>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar");
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden");
+    });
+});
+</script>
+
 <!-- Sidebar -->
 <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
-
     <div class="space-y-6 w-full">
         <!-- Logo -->
         <div class="logo w-full border-b-2 -mt-10 mx-auto sticky -top-6 bg-blue-900 z-10 ">
@@ -106,7 +159,7 @@ $result = $pdo->query($sql);
 
         <!-- Settings and Logout -->
         <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
@@ -162,10 +215,18 @@ $result = $pdo->query($sql);
                     <label class="block text-gray-700 font-medium mb-1">Order Date</label>
                     <input type="date" name="order_date" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
                 </div>
-                <div>
-                    <label class="block text-gray-700 font-medium mb-1">Total Amount</label>
-                    <input type="number" step="0.01" name="total_amount" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                <div id="order-items">
+                    <label class="block text-gray-700 font-medium mb-1">Order Items</label>
+                    <div class="flex space-x-4 mb-4">
+                        <select name="equipment_id[]" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                            <?php foreach ($equipment as $item): ?>
+                                <option value="<?= htmlspecialchars($item['id']) ?>"><?= htmlspecialchars($item['name']) ?> ($<?= htmlspecialchars($item['price']) ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                        <input type="number" name="quantity[]" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Quantity" required>
+                    </div>
                 </div>
+                <button type="button" id="add-item" class="w-full bg-green-600 text-white p-3 rounded-lg font-medium hover:bg-green-700 transition">Add Another Item</button>
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">Status</label>
                     <select name="status" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
@@ -188,6 +249,7 @@ $result = $pdo->query($sql);
                         <th class="p-2 border">Order Date</th>
                         <th class="p-2 border">Status</th>
                         <th class="p-2 border">Total Price</th>
+                        <th class="p-2 border">Equipment Name</th>
                         <th class="p-2 border">Action</th>
                     </tr>
                 </thead>
@@ -198,8 +260,16 @@ $result = $pdo->query($sql);
                         <td class="p-2 border"><?= htmlspecialchars($row['order_date']) ?></td>
                         <td class="p-2 border"><?= htmlspecialchars($row['status']) ?></td>
                         <td class="p-2 border">$<?= htmlspecialchars($row['total_amount']) ?></td>
+                        <td class="p-2 border">
+                            <?php foreach ($order_items as $item): ?>
+                                <?php if ($item['order_id'] == $row['id']): ?>
+                                    <?= htmlspecialchars($item['equipment_name']) ?> (<?= htmlspecialchars($item['quantity']) ?> x $<?= htmlspecialchars($item['unit_price']) ?>)<br>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </td>
                         <td class="p-2 border text-center">
                             <a href="edit_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-blue-600 hover:underline ml-2"><i class="fas fa-pen"></i> Edit</a>
+                            <a href="delete_order.php?id=<?= htmlspecialchars($row['id']) ?>" class="text-red-600 hover:underline ml-2"><i class="fas fa-trash"></i> Delete</a>
                         </td>
                     </tr>
                     <?php endwhile; ?>
@@ -209,90 +279,84 @@ $result = $pdo->query($sql);
     </div>
 
     <script>
-        // Toggle Sidebar on Mobile
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
+        // Ensure the DOM is fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle Sidebar on Mobile
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
 
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-        });
-
-        // Close Sidebar When Clicking Outside
-        document.addEventListener('click', (event) => {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnToggleButton = sidebarToggle.contains(event.target);
-
-            if (!isClickInsideSidebar && !isClickOnToggleButton) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        });
-
-        // Toggle user dropdown menu
-        document.getElementById('userDropdownButton').addEventListener('click', function() {
-            document.getElementById('userDropdownMenu').classList.toggle('hidden');
-        });
-
-        // Dark Mode Toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('bg-gray-800');
-            document.body.classList.toggle('text-gray-200');
-            document.body.classList.toggle('bg-gray-50');
-            document.body.classList.toggle('text-gray-800');
-
-            var icon = document.getElementById('darkModeIcon');
-            if (icon.classList.contains('fa-moon')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
-
-            // Toggle dark mode classes for other elements
-            document.querySelectorAll('.bg-white').forEach(element => {
-                element.classList.toggle('dark:bg-gray-800');
-                element.classList.toggle('dark:text-gray-200');
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
             });
-            document.querySelectorAll('.text-gray-700').forEach(element => {
-                element.classList.toggle('dark:text-gray-300');
+
+            // Close Sidebar When Clicking Outside
+            document.addEventListener('click', (event) => {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggleButton = sidebarToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggleButton) {
+                    sidebar.classList.add('-translate-x-full');
+                }
             });
-            document.querySelectorAll('.border').forEach(element => {
-                element.classList.toggle('dark:border-gray-600');
+
+            // Dark Mode Toggle
+            document.getElementById('darkModeToggle').addEventListener('click', function () {
+                document.body.classList.toggle('bg-gray-800');
+                document.body.classList.toggle('text-gray-50');
+
+                // Toggle icon
+                var icon = document.getElementById('darkModeIcon');
+                if (icon.classList.contains('fa-moon')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+
+                document.querySelectorAll('.bg-white').forEach(element => {
+                    element.classList.toggle('dark:bg-gray-800');
+                    element.classList.toggle('dark:text-gray-200');
+                });
+
+                document.querySelectorAll('.shadow-gray-500').forEach(element => {
+                    element.classList.toggle('dark:shadow-white');
+                });
+
+                document.querySelectorAll('.text-blue-950').forEach(element => {
+                    element.classList.toggle('dark:text-blue-50');
+                });
+
+                document.querySelectorAll('.text-gray-700').forEach(element => {
+                    element.classList.toggle('dark:text-gray-300');
+                });
+
+                document.querySelectorAll('.border').forEach(element => {
+                    element.classList.toggle('dark:border-gray-600');
+                });
+
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.classList.toggle('bg-gray-900');
+                    element.classList.toggle('text-white');
+                    element.classList.toggle('border-gray-600');
+                });
             });
-            document.querySelectorAll('.focus:ring-blue-600').forEach(element => {
-                element.classList.toggle('dark:focus:ring-blue-600');
+
+            // Add another item
+            document.getElementById('add-item').addEventListener('click', function () {
+                const orderItems = document.getElementById('order-items');
+                const newItem = document.createElement('div');
+                newItem.classList.add('flex', 'space-x-4', 'mb-4');
+                newItem.innerHTML = `
+                    <select name="equipment_id[]" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                        <?php foreach ($equipment as $item): ?>
+                            <option value="<?= htmlspecialchars($item['id']) ?>"><?= htmlspecialchars($item['name']) ?> ($<?= htmlspecialchars($item['price']) ?>)</option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="number" name="quantity[]" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Quantity" required>
+                `;
+                orderItems.appendChild(newItem);
             });
-        });
-
-        // Logout Modal
-        const logoutBtn = document.getElementById("logoutBtn");
-        const logoutModal = document.getElementById("logoutModal");
-        const keepPassword = document.getElementById("keepPassword");
-        const removePassword = document.getElementById("removePassword");
-        const cancelLogout = document.getElementById("cancelLogout");
-
-        logoutBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            logoutModal.classList.remove("hidden");
-        });
-
-        keepPassword.addEventListener("click", () => {
-            sessionStorage.removeItem("user");
-            logoutModal.classList.add("hidden");
-            alert("You have logged out, but your password is kept!");
-            location.reload();
-        });
-
-        removePassword.addEventListener("click", () => {
-            localStorage.removeItem("password");
-            sessionStorage.removeItem("user");
-            logoutModal.classList.add("hidden");
-            alert("You have logged out without keeping the password!");
-            location.reload();
-        });
-
-        cancelLogout.addEventListener("click", () => {
-            logoutModal.classList.add("hidden");
         });
     </script>
 </body>

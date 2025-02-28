@@ -35,6 +35,9 @@ $role = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,6 +58,17 @@ $role = $stmt3->fetchAll(PDO::FETCH_ASSOC);
     <i class="fas fa-bars"></i>
 </button>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar"); // تأكدي أن الـ Sidebar عنده هذا الـ ID
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden"); // إضافة أو إزالة كلاس 'hidden'
+    });
+});
+</script>
+
 <!-- Sidebar -->
 <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
 
@@ -72,6 +86,33 @@ $role = $stmt3->fetchAll(PDO::FETCH_ASSOC);
                 <span class="absolute top-0 -mt-2 -mr-1 right-0 bg-red-500 text-white text-xs px-1 rounded-full">5</span>
             </button>
         </div>
+
+        <script>
+    // تعريف العدد الافتراضي للإشعارات
+    let notificationCount = 5;
+
+    // دالة لتحديث العدد في واجهة المستخدم
+    function updateNotificationCount() {
+        const countElement = document.getElementById('notification-count');
+        countElement.textContent = notificationCount;  // تغيير النص لعدد الإشعارات
+    }
+
+    // تنفيذ التحديث عند تحميل الصفحة
+    window.onload = updateNotificationCount;
+
+    // هنا يمكن تغييره حسب الحاجة، مثلاً بعد وقت معين أو من خلال API
+    setTimeout(function() {
+        notificationCount = 10;  // تحديث العدد بعد 3 ثواني
+        updateNotificationCount();
+    }, 3000);
+</script>
+
+
+
+
+
+
+
 
         <!-- User Info -->
         <div class="UserInfo flex items-center w-full space-x-3 mt-4 border-2 border-white p-4 rounded-2xl relative">
@@ -381,7 +422,28 @@ $role = $stmt3->fetchAll(PDO::FETCH_ASSOC);
                 }
             });
 
+
+
+
+
+
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                var searchQuery = this.value.toLowerCase();
+                var items = document.querySelectorAll('.equipment-item'); // تأكد أن كل عنصر معدات عندو هاد الكلاس
+
+                items.forEach(function(item) {
+                    var itemText = item.textContent.toLowerCase();
+                    if (itemText.includes(searchQuery)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+
         
-        </script>
+    </script>
 </body>
 </html>

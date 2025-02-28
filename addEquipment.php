@@ -88,10 +88,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-      <!-- Sidebar Toggle Button (Visible on Mobile) -->
+    <!-- Sidebar Toggle Button (Visible on Mobile) -->
 <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-950 text-white p-2 px-4 rounded-lg">
     <i class="fas fa-bars"></i>
 </button>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar"); // تأكدي أن الـ Sidebar عنده هذا الـ ID
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden"); // إضافة أو إزالة كلاس 'hidden'
+    });
+});
+</script>
 
 <!-- Sidebar -->
 <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
@@ -150,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Settings and Logout -->
         <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
@@ -230,6 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
 
+
     <!-- Main Content -->
     <div class="ml-64 p-6 mb-20 mt-8">
         <h2 class="text-4xl font-bold text-center mb-16 text-blue-950">Add Equipment</h2>
@@ -250,7 +262,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div>
                     <label class="block text-gray-700 font-semibold">Brand</label>
-                    <input type="text" name="brand" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600" required>
+                    <select name="category" class="w-full bg-gray-50 p-2 border rounded-md focus:ring-2 focus:ring-blue-600">
+                    <option></option>
+                        <option>DELL</option>
+                        <option>HP</option>
+                        <option>Lenovo</option>
+                        <option>Asus</option>
+                        <option>Acer</option>
+                        <option>MSI</option>
+                        <option>Razer</option>
+                        <option>Apple</option>
+                    </select>
+                    
                 </div>
                 <div>
                     <label class="block text-gray-700 font-semibold">Model</label>
@@ -320,13 +343,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             });
 
-            // Toggle User Dropdown Menu
-            document.getElementById('userDropdownButton').addEventListener('click', function () {
-                document.getElementById('userDropdownMenu').classList.toggle('hidden');
-            });
 
             // Dark Mode Toggle
-            document.getElementById('darkModeToggle').addEventListener('click', function () {
+                        document.getElementById('darkModeToggle').addEventListener('click', function () {
                 document.body.classList.toggle('bg-gray-800');
                 document.body.classList.toggle('text-gray-50');
 
@@ -379,8 +398,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Simulate form submission (replace with actual submission logic)
                 setTimeout(() => {
                     hideSpinner();
-                    form.submit(); // Submit the form after the spinner is hidden
-                }, 2000); // Simulate a 2-second delay
+                    alert('Equipment added successfully!');
+                }, 3000); // Simulate a 3-second delay
             });
 
             function showSpinner() {
@@ -391,20 +410,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 loadingSpinner.classList.add('hidden');
             }
         });
-
-        document.querySelector('input[name="equipment_image"]').addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function () {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = reader.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
     </script>
 </body>
 </html>

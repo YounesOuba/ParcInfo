@@ -16,7 +16,7 @@ $stmt->execute();
 $user_role = $stmt->fetchColumn();
 
 // Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $user_role == 'technician') {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $user_role !== 'user') {
     $equipment_id = $_POST['equipment_id'];
     $technician_id = $_POST['technician_id'];
     $issue_description = $_POST['issue_description'];
@@ -111,19 +111,19 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <i class="fas fa-users"></i>
                     <span>Suppliers</span>
                 </a>
-                    <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Orders</span>
-                    </a>
-                    <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span>Logs</span>
-                    </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
             </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Settings</span>
                 </a>
@@ -165,7 +165,7 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <!-- Form: Add New Maintenance -->
-        <?php if ($user_role == 'technician'): ?>
+        <?php if ($user_role !== 'user'): ?>
         <form action="maintenance.php" method="POST" class="space-y-5 w-3xl mx-auto">
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Equipment</label>
@@ -214,7 +214,7 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th class="px-5 py-3 border">Equipment</th>
                         <th class="px-5 py-3 border">Issue Description</th>
                         <th class="px-5 py-3 border">Status</th>
-                        <?php if ($user_role == 'technician'): ?>
+                        <?php if ($user_role !== 'user'): ?>
                         <th class="px-5 py-3 border">Action</th>
                         <?php endif; ?>
                     </tr>
@@ -240,50 +240,67 @@ $maintenance_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <script>
-        // Toggle user dropdown menu
-        document.getElementById('userDropdownButton').addEventListener('click', function() {
-            document.getElementById('userDropdownMenu').classList.toggle('hidden');
-        });
+        // Ensure the DOM is fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', function () {
+            // Toggle Sidebar on Mobile
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
 
-        // Dark Mode Toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('bg-gray-800');
-            document.body.classList.toggle('text-gray-200');
-            document.body.classList.toggle('bg-gray-50');
-            document.body.classList.toggle('text-gray-800');
-
-            var icon = document.getElementById('darkModeIcon');
-            if (icon.classList.contains('fa-moon')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
-
-            document.querySelectorAll('.bg-white').forEach(element => {
-                element.classList.toggle('dark:bg-gray-800');
-                element.classList.toggle('dark:text-gray-200');
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
             });
 
-            document.querySelectorAll('.shadow-gray-500').forEach(element => {
-                element.classList.toggle('dark:shadow-white');
-            });
-            document.querySelectorAll('.text-blue-950').forEach(element => {
-                element.classList.toggle('dark:text-blue-50');
+            // Close Sidebar When Clicking Outside
+            document.addEventListener('click', (event) => {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggleButton = sidebarToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggleButton) {
+                    sidebar.classList.add('-translate-x-full');
+                }
             });
 
-            document.querySelectorAll('.text-gray-700').forEach(element => {
-                element.classList.toggle('dark:text-gray-300');
-            });
-            document.querySelectorAll('.border').forEach(element => {
-                element.classList.toggle('dark:border-gray-600');
-            });
+            // Dark Mode Toggle
+            document.getElementById('darkModeToggle').addEventListener('click', function () {
+                document.body.classList.toggle('bg-gray-800');
+                document.body.classList.toggle('text-gray-50');
 
-            document.querySelectorAll('input, select, textarea').forEach(element => {
-                element.classList.toggle('bg-gray-900');
-                element.classList.toggle('text-white');
-                element.classList.toggle('border-gray-600');
+                // Toggle icon
+                var icon = document.getElementById('darkModeIcon');
+                if (icon.classList.contains('fa-moon')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+
+                document.querySelectorAll('.bg-white').forEach(element => {
+                    element.classList.toggle('dark:bg-gray-800');
+                    element.classList.toggle('dark:text-gray-200');
+                });
+
+                document.querySelectorAll('.shadow-gray-500').forEach(element => {
+                    element.classList.toggle('dark:shadow-white');
+                });
+
+                document.querySelectorAll('.text-blue-950').forEach(element => {
+                    element.classList.toggle('dark:text-blue-50');
+                });
+
+                document.querySelectorAll('.text-gray-700').forEach(element => {
+                    element.classList.toggle('dark:text-gray-300');
+                });
+
+                document.querySelectorAll('.border').forEach(element => {
+                    element.classList.toggle('dark:border-gray-600');
+                });
+
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.classList.toggle('bg-gray-900');
+                    element.classList.toggle('text-white');
+                    element.classList.toggle('border-gray-600');
+                });
             });
         });
     </script>
