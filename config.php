@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$dbname = "stagedb";
+$dbname = "stagedb1";
 $username = "root";
 $password = "";
 

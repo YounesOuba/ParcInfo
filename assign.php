@@ -70,6 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <i class="fas fa-bars"></i>
 </button>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar"); // تأكدي أن الـ Sidebar عنده هذا الـ ID
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden"); // إضافة أو إزالة كلاس 'hidden'
+    });
+});
+</script>
+
 <!-- Sidebar -->
 <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
 
@@ -127,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Settings and Logout -->
         <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
@@ -276,9 +287,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
 
             // Toggle User Dropdown Menu
-            document.getElementById('userDropdownButton').addEventListener('click', function () {
-                document.getElementById('userDropdownMenu').classList.toggle('hidden');
-            });
+            // document.getElementById('userDropdownButton').addEventListener('click', function () {
+            //     document.getElementById('userDropdownMenu').classList.toggle('hidden');
+            // });
 
             // Dark Mode Toggle
             document.getElementById('darkModeToggle').addEventListener('click', function () {
@@ -304,7 +315,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     element.classList.toggle('dark:shadow-white');
                 });
 
-                document.querySelectorAll('.text-gray-800').forEach(element => {
+                document.querySelectorAll('.text-blue-950').forEach(element => {
                     element.classList.toggle('dark:text-blue-50');
                 });
 
@@ -324,28 +335,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
 
             // Form Submission Handling
-            const form = document.getElementById('assignForm');
+            const form = document.getElementById('equipmentForm');
             const loadingSpinner = document.getElementById('loadingSpinner');
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-
-                // Validate form fields
-                const equipment = form.elements['equipment'].value;
-                const user = form.elements['user'].value;
-                const assignmentDate = form.elements['assignment_date'].value;
-
-                if (!equipment || !user || !assignmentDate) {
-                    alert('Please fill out all fields.');
-                    return;
-                }
-
                 showSpinner();
 
                 // Simulate form submission (replace with actual submission logic)
                 setTimeout(() => {
                     hideSpinner();
-                    form.submit(); // Submit the form after the spinner is hidden
+                    alert('Equipment added successfully!');
                 }, 3000); // Simulate a 3-second delay
             });
 
@@ -358,5 +358,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         });
     </script>
+
+
 </body>
 </html>

@@ -46,6 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <i class="fas fa-bars"></i>
     </button>
 
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar"); // تأكدي أن الـ Sidebar عنده هذا الـ ID
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden"); // إضافة أو إزالة كلاس 'hidden'
+    });
+});
+</script>
+
     <!-- Sidebar -->
     <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-lg z-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300">
         <div class="space-y-6 w-full">
@@ -95,11 +106,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <i class="fas fa-wrench"></i>
                     <span>Maintenance</span>
                 </a>
+
+                <a href="suppliers.php" class="block py-2 px-4 hover:bg-blue-700">
+                <i class="fas fa-users"></i>
+                <span>Suppliers</span>
+            </a>
+                <a href="orders.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="logs.php" class="block py-2 px-4 hover:bg-blue-700">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Logs</span>
+                </a>
             </div>
 
             <!-- Settings and Logout -->
             <div class="mt-8 space-y-4">
-                <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                     <i class="fas fa-cogs"></i>
                     <span>Settings</span>
                 </a>

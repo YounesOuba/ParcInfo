@@ -50,6 +50,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     <i class="fas fa-bars"></i>
 </button>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar"); // تأكدي أن الـ Sidebar عنده هذا الـ ID
+
+    sidebarToggle.addEventListener("click", function () {
+        sidebar.classList.toggle("hidden"); // إضافة أو إزالة كلاس 'hidden'
+    });
+});
+</script>
+
 <!-- Sidebar -->
 <div id="sidebar" class="md:flex hidden w-64 bg-blue-900 rounded-r-md scroll-m-10 text-white p-6 fixed top-0 left-0 h-full shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar">
 
@@ -107,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
 
         <!-- Settings and Logout -->
         <div class="mt-8 space-y-4">
-            <a href="settings.html" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
+            <a href="settings.php" class="flex items-center space-x-2 hover:bg-blue-700 px-4 py-2 rounded-lg">
                 <i class="fas fa-cogs"></i>
                 <span>Settings</span>
             </a>
@@ -159,97 +170,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
 
 
 <script>
-            document.getElementById('userDropdownButton').addEventListener('click', function() {
-            document.getElementById('userDropdownMenu').classList.toggle('hidden');
-            });
-
-
-            //charts section
-            var pieChartCtx = document.getElementById('pieChart').getContext('2d');
-            var barChartCtx = document.getElementById('barChart').getContext('2d');
-
-            // Pie Chart
-            new Chart(pieChartCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Total Equipment', 'Assigned Equipment', 'Under Maintenance'],
-                    datasets: [{
-                        data: [<?php echo count($totalEquipment);?>, <?php echo count($assignedEquipment)  ?>, <?php echo count($maintenanceEquipment) ?>],
-                        backgroundColor: ['#3b82f6', '#10b981', '#f97316'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'start',
-                        labels: {
-                            boxWidth: 15,  
-                        }
-                    }
-            }
-        }
-            });
-
-            // Bar Chart
-            new Chart(barChartCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Total Equipment', 'Assigned Equipment', 'Under Maintenance'],
-                    datasets: [{
-                        label: 'Equipment Status',
-                        data: [<?php echo count($totalEquipment);?>, <?php echo count($assignedEquipment)  ?>, <?php echo count($maintenanceEquipment) ?>],
-                        backgroundColor: ['#3b82f6', '#10b981', '#f97316'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                }
-            });
-
-
-            // new Chart(document.getElementById('lineChart'), {
-            //     type: 'line',
-            //     data: {
-            //         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-            //         datasets: [{
-            //             label: 'Equipment Usage',
-            //             data: [10, 20, 15, 25, 30],
-            //             borderColor: '#3b82f6',
-            //             fill: false,
-            //         }]
-            //     },
-            // });
-
-        //dark mode
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            document.body.classList.toggle('bg-gray-800');
-            document.body.classList.toggle('text-gray-50');
-            
-            // Toggle icon
-            var icon = document.getElementById('darkModeIcon');
-            if (icon.classList.contains('fa-moon')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            }
-
-            document.querySelectorAll('.shadow-md').forEach(element => {
-                element.classList.toggle('dark:shadow-white');
-            });
-
-            document.querySelectorAll('input, select, textarea').forEach(element => {
-                element.classList.toggle('bg-gray-900');
-                element.classList.toggle('text-white');
-                element.classList.toggle('border-gray-600');
-            });
-        });
-
-
-
+        // Ensure the DOM is fully loaded before running the script
+        document.addEventListener('DOMContentLoaded', function () {
             // Toggle Sidebar on Mobile
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
@@ -258,14 +180,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 sidebar.classList.toggle('-translate-x-full');
             });
 
-            // Close Sidebar When Clicking Outside (Optional)
+            // Close Sidebar When Clicking Outside
             document.addEventListener('click', (event) => {
-                if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggleButton = sidebarToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnToggleButton) {
                     sidebar.classList.add('-translate-x-full');
                 }
             });
 
-        
+
+            // Dark Mode Toggle
+                        document.getElementById('darkModeToggle').addEventListener('click', function () {
+                document.body.classList.toggle('bg-gray-800');
+                document.body.classList.toggle('text-gray-50');
+
+                // Toggle icon
+                var icon = document.getElementById('darkModeIcon');
+                if (icon.classList.contains('fa-moon')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+
+                document.querySelectorAll('.bg-white').forEach(element => {
+                    element.classList.toggle('dark:bg-gray-800');
+                    element.classList.toggle('dark:text-gray-200');
+                });
+
+                document.querySelectorAll('.shadow-gray-500').forEach(element => {
+                    element.classList.toggle('dark:shadow-white');
+                });
+
+                document.querySelectorAll('.text-blue-950').forEach(element => {
+                    element.classList.toggle('dark:text-blue-50');
+                });
+
+                document.querySelectorAll('.text-gray-700').forEach(element => {
+                    element.classList.toggle('dark:text-gray-300');
+                });
+
+                document.querySelectorAll('.border').forEach(element => {
+                    element.classList.toggle('dark:border-gray-600');
+                });
+
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.classList.toggle('bg-gray-900');
+                    element.classList.toggle('text-white');
+                    element.classList.toggle('border-gray-600');
+                });
+            });
+
+            // Form Submission Handling
+            const form = document.getElementById('equipmentForm');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Prevent default form submission
+                showSpinner();
+
+                // Simulate form submission (replace with actual submission logic)
+                setTimeout(() => {
+                    hideSpinner();
+                    alert('Equipment added successfully!');
+                }, 3000); // Simulate a 3-second delay
+            });
+
+            function showSpinner() {
+                loadingSpinner.classList.remove('hidden');
+            }
+
+            function hideSpinner() {
+                loadingSpinner.classList.add('hidden');
+            }
+        });
         </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 $servername = "localhost"; // أو اسم السيرفر ديالك
 $username = "root"; // اسم المستخدم
 $password = ""; // كلمة المرور
-$dbname = "stagedb"; // اسم قاعدة البيانات
+$dbname = "stagedb1"; // اسم قاعدة البيانات
 
 // إنشاء الاتصال
 $conn = new mysqli($servername, $username, $password, $dbname);
